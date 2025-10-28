@@ -1,0 +1,46 @@
+# =============== #
+# Unity Generated #
+# =============== #
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+UserSettings/
+
+# ============ #
+# OS Generated #
+# ============ #
+.DS_Store
+Thumbs.db
+
+# ========== #
+# IDE Files  #
+# ========== #
+.vscode/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+
+# ============= #
+# Other Files   #
+# ============= #
+*.bak
+*.tmp
+*.old
+*.log
+
+# =============== #
+# Collaboration   #
+# =============== #
+# Optional: Ignore large auto-generated data
+*.unitypackage
