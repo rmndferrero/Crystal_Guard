@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerLook : MonoBehaviour
 {
@@ -8,16 +9,21 @@ public class PlayerLook : MonoBehaviour
 
     private float xRotation = 0f;
     private Vector2 lookInput;
+    private bool isSettled = false;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        StartCoroutine(SettleMouse());
     }
 
     void Update()
     {
-        HandleMouseLook();
+        if (isSettled)
+        {
+            HandleMouseLook();
+        }
     }
 
     public void OnLook(InputValue value)
@@ -35,5 +41,11 @@ public class PlayerLook : MonoBehaviour
 
         cam.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    IEnumerator SettleMouse()
+    {
+        yield return null;
+        isSettled = true;
     }
 }
