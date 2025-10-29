@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
@@ -16,12 +17,23 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private bool isGrounded;
     private float cooldownTimer = 0f;
-    private bool isDashing = false;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
         playerInput = new PlayerInput();
+
+        playerInput.OnFoot.Enable();
+    }
+
+    void OnEnable()
+    {
+        playerInput.OnFoot.Enable();
+    }
+
+    void OnDisable()
+    {
+        playerInput.OnFoot.Disable();
     }
 
     void Update()
@@ -36,14 +48,14 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
-    public void OnMovement(InputValue value)
+    void OnMovement(InputValue value)
     {
         moveInput = value.Get<Vector2>();
     }
 
-    public void OnDash(InputAction.CallbackContext context)
+    void OnDash()
     {
-        if (context.started && isGrounded && cooldownTimer <= 0)
+        if (isGrounded && cooldownTimer <= 0)
         {
             if (moveInput.magnitude > 0.1f)
             {
@@ -60,25 +72,16 @@ public class PlayerMovement : MonoBehaviour
     void MovePlayer()
     {
         Vector3 direction = transform.right * moveInput.x + transform.forward * moveInput.y;
-        direction.Normalize();
-        rb.linearVelocity = new Vector3(direction.x * moveSpeed, rb.linearVelocity.y, direction.z * moveSpeed);
+        Vector3 targetVelocity = direction.normalized * moveSpeed;
+
+        rb.linearVelocity = new Vector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
     }
 
     void StartDash()
     {
         cooldownTimer = dashCooldown;
-        isDashing = true;
-
-        Vector3 dashDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
-        dashDirection.Normalize();
+        Vector3 dashDirection = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
 
         rb.AddForce(dashDirection * dashForce, ForceMode.Impulse);
-
-        Invoke("EndDash", 0.1f);
-    }
-
-    void EndDash()
-    {
-        isDashing = false;
     }
 }
