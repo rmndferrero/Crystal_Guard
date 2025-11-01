@@ -1,8 +1,9 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Arrow : MonoBehaviour
 {
-    public float speed = 15f;
+    public float speed = 50f;
     public float lifeTime = 3f;
 
     private Rigidbody rb;

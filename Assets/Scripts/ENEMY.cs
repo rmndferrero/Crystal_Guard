@@ -4,7 +4,7 @@ using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
-public class EnemyAiTutorial : MonoBehaviour
+public class EnemyArcher : MonoBehaviour
 {
     public NavMeshAgent agent;
     public Transform player;
@@ -34,6 +34,10 @@ public class EnemyAiTutorial : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
+    //Crystal Target
+    private Transform crystal;
+    private CrystalHealth crystalHealth;
+
     private Rigidbody rb;
     private bool isDead = false;
 
@@ -49,6 +53,21 @@ public class EnemyAiTutorial : MonoBehaviour
         {
             originalColor = modelRenderer.material.color;
         }
+
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+        }
+
+        crystalHealth = FindFirstObjectByType<CrystalHealth>();
+        if (crystalHealth != null)
+        {
+            crystal = crystalHealth.transform;
+        }
     }
 
     private void Update()
@@ -57,24 +76,39 @@ public class EnemyAiTutorial : MonoBehaviour
         if (player == null) return;
         if (!agent.isOnNavMesh) return;
 
+        // --- THIS IS THE "LEASH" LOGIC ---
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
 
-        if (!playerInSightRange && !playerInAttackRange) Patroling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInAttackRange && playerInSightRange) AttackPlayer();
+        if (playerInSightRange && !playerInAttackRange)
+        {
+            ChasePlayer();
+        }
+        else if (playerInAttackRange && playerInSightRange)
+        {
+            AttackPlayer();
+        }
+        else
+        {
+            // If player is NOT in sight, default to the Crystal
+            if (crystal != null)
+            {
+                ChaseCrystal();
+            }
+            else
+            {
+                Patroling(); // Failsafe if crystal is destroyed
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (isDead) return;
 
-        if (collision.gameObject.tag == "Damage")
+        if (collision.gameObject.CompareTag("Damage"))
         {
-            if (flashCoroutine != null)
-            {
-                StopCoroutine(flashCoroutine);
-            }
+            if (flashCoroutine != null) StopCoroutine(flashCoroutine);
             flashCoroutine = StartCoroutine(HitFlash());
 
             TakeDamage(10);
@@ -94,20 +128,35 @@ public class EnemyAiTutorial : MonoBehaviour
         if (distanceToWalkPoint.magnitude < 1f)
             walkPointSet = false;
     }
+
     private void SearchWalkPoint()
     {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
+        Vector3 randomDirection = Random.insideUnitSphere * walkPointRange;
+        randomDirection += transform.position;
 
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, Ground))
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, walkPointRange, NavMesh.AllAreas))
+        {
+            walkPoint = hit.position;
             walkPointSet = true;
+        }
     }
 
     private void ChasePlayer()
     {
         agent.SetDestination(player.position);
+    }
+
+    private void ChaseCrystal()
+    {
+        if (crystal == null) return;
+        agent.SetDestination(crystal.position);
+        float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
+
+        if (distanceToCrystal <= attackRange)
+        {
+            AttackCrystal();
+        }
     }
 
     private void AttackPlayer()
@@ -127,6 +176,25 @@ public class EnemyAiTutorial : MonoBehaviour
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
+
+    private void AttackCrystal()
+    {
+        if (crystal == null) return;
+        agent.SetDestination(transform.position);
+        transform.LookAt(crystal);
+
+        if (!alreadyAttacked)
+        {
+            Vector3 direction = (crystal.position - firePoint.position).normalized;
+
+            Rigidbody rb_proj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(direction)).GetComponent<Rigidbody>();
+            rb_proj.AddForce(direction * projectileSpeed, ForceMode.Impulse);
+
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+        }
+    }
+
     private void ResetAttack()
     {
         alreadyAttacked = false;
@@ -148,6 +216,9 @@ public class EnemyAiTutorial : MonoBehaviour
 
         rb.isKinematic = false;
         rb.freezeRotation = false;
+
+        WaveManager waveManager = FindFirstObjectByType<WaveManager>();
+        if (waveManager != null) waveManager.OnEnemyDied();
 
         Destroy(gameObject, 4f);
     }
