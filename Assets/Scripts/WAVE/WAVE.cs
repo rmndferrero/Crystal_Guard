@@ -6,11 +6,17 @@ using TMPro;
 public class WaveManager : MonoBehaviour
 {
     [System.Serializable]
+    public class EnemyGroup
+    {
+        public GameObject enemyPrefab;
+        public int count;
+    }
+
+    [System.Serializable]
     public class Wave
     {
         public string name;
-        public GameObject enemyPrefab;
-        public int count;
+        public EnemyGroup[] enemyGroups;
         public float spawnRate;
     }
 
@@ -31,7 +37,7 @@ public class WaveManager : MonoBehaviour
     {
         if (winScreen) winScreen.SetActive(false);
         if (loseScreen) loseScreen.SetActive(false);
-        if (player == null) player = FindObjectOfType<PlayerHealth>();
+        if (player == null) player = FindFirstObjectByType<PlayerHealth>();
 
         Time.timeScale = 1f;
         StartCoroutine(SpawnNextWave());
@@ -51,12 +57,20 @@ public class WaveManager : MonoBehaviour
     {
         Wave wave = waves[currentWaveIndex];
         UpdateWaveUI(wave.name);
-        enemiesAlive = wave.count;
 
-        for (int i = 0; i < wave.count; i++)
+        enemiesAlive = 0;
+        foreach (EnemyGroup group in wave.enemyGroups)
         {
-            SpawnEnemy(wave.enemyPrefab);
-            yield return new WaitForSeconds(1f / wave.spawnRate);
+            enemiesAlive += group.count;
+        }
+
+        foreach (EnemyGroup group in wave.enemyGroups)
+        {
+            for (int i = 0; i < group.count; i++)
+            {
+                SpawnEnemy(group.enemyPrefab);
+                yield return new WaitForSeconds(1f / wave.spawnRate);
+            }
         }
 
         currentWaveIndex++;
@@ -79,8 +93,20 @@ public class WaveManager : MonoBehaviour
         }
         else if (enemiesAlive == 0 && currentWaveIndex < waves.Length)
         {
-            StartCoroutine(SpawnNextWave());
+            if (FindFirstObjectByType<UpgradeManager>() != null)
+            {
+                FindFirstObjectByType<UpgradeManager>().ShowUpgradeScreen();
+            }
+            else
+            {
+                StartCoroutine(SpawnNextWave());
+            }
         }
+    }
+
+    public void StartNextWaveCoroutine()
+    {
+        StartCoroutine(SpawnNextWave());
     }
 
     public void HandleWin()

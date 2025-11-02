@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|c:\\users\\ncort\\downloads\\crystal_guard\\assets\\scripts\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|c:\\users\\ncort\\downloads\\crystal_guard\\assets\\scripts\\upgrade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\upgrade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|c:\\users\\ncort\\downloads\\crystal_guard\\assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\arrow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,10 +23,6 @@
       "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\crystal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\playershooting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playershooting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\bow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -39,12 +31,24 @@
       "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\main menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\playerlook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playerlook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{48C77CAC-F864-7C91-1244-7A7E9CF0AC4A}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\playerlook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\playerlook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\playermovement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\playershooting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\playershooting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ncort\\Downloads\\Crystal_Guard\\assets\\scripts\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -59,6 +63,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "UPGRADE.cs",
+              "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\UPGRADE.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UPGRADE.cs",
+              "ToolTip": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\UPGRADE.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UPGRADE.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAowDwAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-02T12:47:34.263Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ENEMY MELEE.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\ENEMY MELEE.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ENEMY MELEE.cs",
@@ -66,24 +83,23 @@
               "RelativeToolTip": "Assets\\Scripts\\ENEMY MELEE.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-01T09:47:49.184Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-01T09:47:49.184Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 11,
               "Title": "WAVE.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\WAVE.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\WAVE.cs",
               "ToolTip": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\WAVE.cs",
               "RelativeToolTip": "Assets\\Scripts\\WAVE.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAAAIYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-01T07:21:34.446Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "CRYSTAL.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\CRYSTAL.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\CRYSTAL.cs",
@@ -95,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "PLAYER HP.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\PLAYER HP.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PLAYER HP.cs",
@@ -107,7 +123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ENEMY.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\ENEMY.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ENEMY.cs",
@@ -115,12 +131,11 @@
               "RelativeToolTip": "Assets\\Scripts\\ENEMY.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-31T14:05:07.435Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-31T14:05:07.435Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Arrow.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\Arrow.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Arrow.cs",
@@ -132,7 +147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "PlayerShooting.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\PlayerShooting.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerShooting.cs",
@@ -144,7 +159,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 5,
               "Title": "Bow.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\Bow.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Bow.cs",
@@ -156,7 +171,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 6,
               "Title": "Main Menu.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\Main Menu.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Main Menu.cs",
@@ -168,7 +183,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
               "Title": "PlayerLook.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\PlayerLook.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerLook.cs",
@@ -180,13 +195,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 9,
               "Title": "PlayerMovement.cs",
               "DocumentMoniker": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\PlayerMovement.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerMovement.cs",
               "ToolTip": "C:\\Users\\ncort\\Downloads\\Crystal_Guard\\Assets\\Scripts\\PlayerMovement.cs",
               "RelativeToolTip": "Assets\\Scripts\\PlayerMovement.cs",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAwwGUAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAswGUAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-29T11:16:54.56Z"
             }
