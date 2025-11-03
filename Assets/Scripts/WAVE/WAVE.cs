@@ -32,9 +32,12 @@ public class WaveManager : MonoBehaviour
     private int currentWaveIndex = 0;
     private int enemiesAlive = 0;
     private bool gameIsOver = false;
+    private UpgradeManager upgradeManager;
 
     void Start()
     {
+        upgradeManager = GetComponent<UpgradeManager>();
+
         if (winScreen) winScreen.SetActive(false);
         if (loseScreen) loseScreen.SetActive(false);
         if (player == null) player = FindFirstObjectByType<PlayerHealth>();
@@ -42,10 +45,7 @@ public class WaveManager : MonoBehaviour
         Time.timeScale = 1f;
         StartCoroutine(SpawnNextWave());
     }
-    public int GetCurrentWaveIndex()
-    {
-        return currentWaveIndex;
-    }
+
     void Update()
     {
         if (gameIsOver) return;
@@ -65,6 +65,13 @@ public class WaveManager : MonoBehaviour
         foreach (EnemyGroup group in wave.enemyGroups)
         {
             enemiesAlive += group.count;
+        }
+
+        // Failsafe for empty waves
+        if (enemiesAlive == 0)
+        {
+            OnEnemyDied();
+            yield break;
         }
 
         foreach (EnemyGroup group in wave.enemyGroups)
@@ -90,26 +97,37 @@ public class WaveManager : MonoBehaviour
     {
         enemiesAlive--;
 
+        if (enemiesAlive > 0) return;
+
         if (enemiesAlive == 0 && currentWaveIndex == waves.Length)
         {
             HandleWin();
         }
         else if (enemiesAlive == 0 && currentWaveIndex < waves.Length)
         {
-            if (FindFirstObjectByType<UpgradeManager>() != null)
+            // --- THIS IS THE FIX ---
+            // We show the upgrade screen INSTEAD of starting the next wave.
+            if (upgradeManager != null)
             {
-                FindFirstObjectByType<UpgradeManager>().ShowUpgradeScreen();
+                upgradeManager.ShowUpgradeScreen();
             }
             else
             {
+                // Failsafe if you forgot the upgrade manager
                 StartCoroutine(SpawnNextWave());
             }
         }
     }
 
+    // This is called by the UpgradeManager after an upgrade is chosen
     public void StartNextWaveCoroutine()
     {
         StartCoroutine(SpawnNextWave());
+    }
+
+    public int GetCurrentWaveIndex()
+    {
+        return currentWaveIndex;
     }
 
     public void HandleWin()

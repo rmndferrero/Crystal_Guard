@@ -1,14 +1,22 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 
 public class UpgradeManager : MonoBehaviour
 {
+    [Header("UI Panels")]
     public GameObject upgradeScreen;
+    public GameObject fireballUnlockScreen;
+
+    [Header("Upgrade Buttons")]
     public Button upgradeButton1;
     public Button upgradeButton2;
     public Button upgradeButton3;
+
+    [Header("Settings")]
+    public float slowMotionTimeScale = 0.1f;
 
     private PlayerMovement playerMovement;
     private PlayerHealth playerHealth;
@@ -29,6 +37,7 @@ public class UpgradeManager : MonoBehaviour
         waveManager = GetComponent<WaveManager>();
 
         upgradeScreen.SetActive(false);
+        fireballUnlockScreen.SetActive(false);
 
         PopulateUpgradePool();
     }
@@ -45,43 +54,72 @@ public class UpgradeManager : MonoBehaviour
 
     public void ShowUpgradeScreen()
     {
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // Check if this is the first wave (Wave index 0 just finished)
         if (waveManager.GetCurrentWaveIndex() == 1)
         {
-            // Special case: Unlock Fireball
-            upgradeButton1.onClick.RemoveAllListeners();
-            upgradeButton1.GetComponentInChildren<TextMeshProUGUI>().text = "Unlock Fireball! (E Key)";
-            upgradeButton1.onClick.AddListener(() => ApplyUpgrade("UnlockFireball"));
-
-            upgradeButton2.gameObject.SetActive(false);
-            upgradeButton3.gameObject.SetActive(false);
+            StartCoroutine(ShowFireballUnlock());
         }
         else
         {
-            // Normal wave: Show 3 random upgrades
-            upgradeButton2.gameObject.SetActive(true);
-            upgradeButton3.gameObject.SetActive(true);
+            ShowRandomUpgrades();
+        }
+    }
 
-            List<string> options = GetRandomUpgrades(3);
+    IEnumerator ShowFireballUnlock()
+    {
+        PauseGame(false); // Pause but don't show cursor
+        fireballUnlockScreen.SetActive(true);
 
+        if (fireballAbility != null)
+        {
+            fireballAbility.isUnlocked = true;
+        }
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        fireballUnlockScreen.SetActive(false);
+        UnpauseGame();
+        waveManager.StartNextWaveCoroutine();
+    }
+
+    void ShowRandomUpgrades()
+    {
+        PauseGame(true); // Pause and show cursor
+        upgradeScreen.SetActive(true);
+
+        List<string> options = GetRandomUpgrades(3);
+        if (options.Count >= 3)
+        {
             SetupButton(upgradeButton1, options[0]);
             SetupButton(upgradeButton2, options[1]);
             SetupButton(upgradeButton3, options[2]);
         }
-
-        upgradeScreen.SetActive(true);
     }
+
+    // --- THIS IS THE FIX ---
+    void PauseGame(bool showCursor)
+    {
+        Time.timeScale = slowMotionTimeScale;
+
+        if (showCursor)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    void UnpauseGame()
+    {
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    // --- END OF FIX ---
 
     List<string> GetRandomUpgrades(int count)
     {
         List<string> availableUpgrades = new List<string>(upgradePool);
         List<string> chosenUpgrades = new List<string>();
 
-        // Remove fireball damage if it's not unlocked yet
         if (fireballAbility != null && !fireballAbility.isUnlocked)
         {
             availableUpgrades.Remove("Fireball Damage+");
@@ -109,9 +147,6 @@ public class UpgradeManager : MonoBehaviour
     {
         switch (upgradeType)
         {
-            case "UnlockFireball":
-                if (fireballAbility != null) fireballAbility.isUnlocked = true;
-                break;
             case "Bow Damage+":
                 if (bowController != null) bowController.arrowDamage += 5f;
                 break;
@@ -138,10 +173,7 @@ public class UpgradeManager : MonoBehaviour
     void HideUpgradeScreen()
     {
         upgradeScreen.SetActive(false);
-
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        UnpauseGame();
 
         if (waveManager != null)
         {
