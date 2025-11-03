@@ -42,7 +42,10 @@ public class WaveManager : MonoBehaviour
         Time.timeScale = 1f;
         StartCoroutine(SpawnNextWave());
     }
-
+    public int GetCurrentWaveIndex()
+    {
+        return currentWaveIndex;
+    }
     void Update()
     {
         if (gameIsOver) return;

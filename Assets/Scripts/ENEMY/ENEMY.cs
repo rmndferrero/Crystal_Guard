@@ -76,7 +76,6 @@ public class EnemyArcher : MonoBehaviour
         if (player == null) return;
         if (!agent.isOnNavMesh) return;
 
-        // --- THIS IS THE "LEASH" LOGIC ---
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
 
@@ -90,14 +89,13 @@ public class EnemyArcher : MonoBehaviour
         }
         else
         {
-            // If player is NOT in sight, default to the Crystal
             if (crystal != null)
             {
                 ChaseCrystal();
             }
             else
             {
-                Patroling(); // Failsafe if crystal is destroyed
+                Patroling();
             }
         }
     }
@@ -108,11 +106,15 @@ public class EnemyArcher : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Damage"))
         {
-            if (flashCoroutine != null) StopCoroutine(flashCoroutine);
-            flashCoroutine = StartCoroutine(HitFlash());
+            Arrow arrow = collision.gameObject.GetComponent<Arrow>();
+            if (arrow != null)
+            {
+                if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+                flashCoroutine = StartCoroutine(HitFlash());
 
-            TakeDamage(10);
-            Destroy(collision.gameObject);
+                TakeDamage((int)arrow.damage);
+                Destroy(collision.gameObject);
+            }
         }
     }
 
@@ -153,7 +155,7 @@ public class EnemyArcher : MonoBehaviour
         agent.SetDestination(crystal.position);
         float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
 
-        if (distanceToCrystal <= attackRange)
+        if (distanceToCrystal <= agent.stoppingDistance)
         {
             AttackCrystal();
         }

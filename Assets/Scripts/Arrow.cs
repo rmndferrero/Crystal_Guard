@@ -5,6 +5,7 @@ public class Arrow : MonoBehaviour
 {
     public float speed = 50f;
     public float lifeTime = 3f;
+    public float damage = 10f;
 
     private Rigidbody rb;
 
@@ -13,10 +14,5 @@ public class Arrow : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.linearVelocity = transform.forward * speed;
         Destroy(gameObject, lifeTime);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        Destroy(gameObject);
     }
 }

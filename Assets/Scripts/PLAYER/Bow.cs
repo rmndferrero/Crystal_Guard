@@ -6,6 +6,7 @@ public class BowController : MonoBehaviour
     public float reloadTime = 1f;
     public float fireRate = 0.5f;
     public int quiverSize = 20;
+    public float arrowDamage = 10f;
 
     public GameObject arrowPrefab;
     public Transform arrowSpawnPoint;
@@ -37,7 +38,13 @@ public class BowController : MonoBehaviour
         nextTimeToFire = Time.time + fireRate;
         currentAmmo--;
 
-        Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
+        GameObject arrowObj = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
+
+        Arrow arrowScript = arrowObj.GetComponent<Arrow>();
+        if (arrowScript != null)
+        {
+            arrowScript.damage = this.arrowDamage;
+        }
     }
 
     public void TryReload()

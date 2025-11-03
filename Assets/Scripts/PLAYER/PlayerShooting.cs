@@ -5,6 +5,12 @@ public class PlayerShooting : MonoBehaviour
 {
     public BowController bow;
     private bool isHoldingShoot = false;
+    private FireballAbility fireballAbility;
+
+    void Awake()
+    {
+        fireballAbility = GetComponent<FireballAbility>();
+    }
 
     void OnShoot()
     {
@@ -26,6 +32,11 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
+        if (fireballAbility != null && fireballAbility.isCharging)
+        {
+            return;
+        }
+
         if (isHoldingShoot && bow != null)
         {
             bow.Shoot();

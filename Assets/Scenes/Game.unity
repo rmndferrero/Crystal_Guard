@@ -170,6 +170,27 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthSlider: {fileID: 2111353759}
+--- !u!114 &363144258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363144237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc05021d1e0d25543991574783317e46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireballPrefab: {fileID: 525684298321235712, guid: 52a1e3a25c9ec934d999ea3f49c185c8, type: 3}
+  fireballCooldown: 3
+  fireballDamage: 25
+  aoeRadius: 3
+  firePoint: {fileID: 1693616192}
+  throwIndicatorPrefab: {fileID: 635361771592068906, guid: a2ac1c4d0877efd42bccfc76f5d839fa, type: 3}
+  explosionPrefab: {fileID: 7135880642722605111, guid: 91663debcce42fb41a77492e36c46946, type: 3}
+  isUnlocked: 1
+  isCharging: 0
 --- !u!1 &481055715
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,6 +558,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1245026412}
   m_CullTransparentMesh: 1
+--- !u!4 &1255833085 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2385203424952236200, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+  m_PrefabInstance: {fileID: 7995605716105333699}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1259239552
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,6 +1104,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1642904098}
   m_CullTransparentMesh: 1
+--- !u!1 &1693616191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1693616192}
+  m_Layer: 7
+  m_Name: FireBall shoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1693616192
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693616191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1255833085}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1848679791
 GameObject:
   m_ObjectHideFlags: 0
@@ -1376,13 +1433,111 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_NotificationBehavior
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_ActionId
+      value: 5605db7d-5fc6-44ee-9306-cbfad250f1ff
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[1].m_ActionId
+      value: 442fdd49-bdf2-46d6-bad6-402e00f3ba23
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_ActionId
+      value: 9af63688-6511-4fa5-b648-d5291ee693e4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_ActionId
+      value: 654dbc6e-7bbf-4d9d-b66e-80162fb1e355
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionId
+      value: df900888-c6f8-40b3-8025-d014f610ba35
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionId
+      value: 97e297e8-255c-4845-acc6-510556a30f0c
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[6].m_ActionId
+      value: 0fe94f2e-216b-4ec0-b78f-3c695bbd83a1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_ActionName
+      value: 'OnFoot/Dash[/Keyboard/space]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[1].m_ActionName
+      value: 'OnFoot/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_ActionName
+      value: 'OnFoot/Look[/Mouse/delta]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_ActionName
+      value: 'OnFoot/Shoot[/Mouse/leftButton]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionName
+      value: 'OnFoot/ShootRelease[/Mouse/leftButton]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionName
+      value: 'OnFoot/Reload[/Keyboard/r]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[6].m_ActionName
+      value: 'OnFoot/FIREBALL[/Keyboard/e]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_DeviceLostEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_DeviceLostEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_DeviceLostEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 363144237}
+    - target: {fileID: 9219395474387364401, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2385203424952236200, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1693616192}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7165357303244677512, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
       insertIndex: 5
       addedObject: {fileID: 363144248}
+    - targetCorrespondingSourceObject: {fileID: 7165357303244677512, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 363144258}
   m_SourcePrefab: {fileID: 100100000, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

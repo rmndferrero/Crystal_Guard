@@ -4,7 +4,7 @@ using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
-public class EnemyMelee : MonoBehaviour
+public class MeleeEnemyAI : MonoBehaviour
 {
     public NavMeshAgent agent;
     public Transform player;
@@ -18,7 +18,7 @@ public class EnemyMelee : MonoBehaviour
 
     //Attacking
     public float timeBetweenAttacks;
-    public int attackDamage = 10;
+    public int attackDamage = 15;
     bool alreadyAttacked;
 
     //Hit Flash
@@ -90,10 +90,6 @@ public class EnemyMelee : MonoBehaviour
             {
                 ChaseCrystal();
             }
-            else
-            {
-                Patroling();
-            }
         }
     }
 
@@ -103,43 +99,16 @@ public class EnemyMelee : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Damage"))
         {
-            if (flashCoroutine != null) StopCoroutine(flashCoroutine);
-            flashCoroutine = StartCoroutine(HitFlash());
+            Arrow arrow = collision.gameObject.GetComponent<Arrow>();
+            if (arrow != null)
+            {
+                if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+                flashCoroutine = StartCoroutine(HitFlash());
 
-            TakeDamage(10);
-            Destroy(collision.gameObject);
+                TakeDamage((int)arrow.damage);
+                Destroy(collision.gameObject);
+            }
         }
-    }
-
-    private void Patroling()
-    {
-        if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
-
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-
-        if (distanceToWalkPoint.magnitude < 1f)
-            walkPointSet = false;
-    }
-
-    private void SearchWalkPoint()
-    {
-        Vector3 randomDirection = Random.insideUnitSphere * walkPointRange;
-        randomDirection += transform.position;
-
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, walkPointRange, NavMesh.AllAreas))
-        {
-            walkPoint = hit.position;
-            walkPointSet = true;
-        }
-    }
-
-    private void ChasePlayer()
-    {
-        agent.SetDestination(player.position);
     }
 
     private void ChaseCrystal()
@@ -154,6 +123,11 @@ public class EnemyMelee : MonoBehaviour
         }
     }
 
+    private void ChasePlayer()
+    {
+        agent.SetDestination(player.position);
+    }
+
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
@@ -161,13 +135,11 @@ public class EnemyMelee : MonoBehaviour
 
         if (!alreadyAttacked)
         {
-            // --- MELEE ATTACK LOGIC ---
             PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(attackDamage);
             }
-            // --- END OF LOGIC ---
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -182,12 +154,10 @@ public class EnemyMelee : MonoBehaviour
 
         if (!alreadyAttacked)
         {
-            // --- MELEE ATTACK LOGIC ---
             if (crystalHealth != null)
             {
                 crystalHealth.TakeDamage(attackDamage);
             }
-            // --- END OF LOGIC ---
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -230,13 +200,5 @@ public class EnemyMelee : MonoBehaviour
             yield return new WaitForSeconds(0.15f);
             modelRenderer.material.color = originalColor;
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, sightRange);
     }
 }

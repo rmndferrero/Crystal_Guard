@@ -12,7 +12,7 @@ public class CrystalHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        waveManager = FindObjectOfType<WaveManager>();
+        waveManager = FindFirstObjectByType<WaveManager>();
 
         if (healthSlider != null)
         {
@@ -44,5 +44,19 @@ public class CrystalHealth : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    public void Heal(float amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth;
+        }
     }
 }
