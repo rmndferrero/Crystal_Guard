@@ -109,9 +109,6 @@ public class EnemyArcher : MonoBehaviour
             Arrow arrow = collision.gameObject.GetComponent<Arrow>();
             if (arrow != null)
             {
-                if (flashCoroutine != null) StopCoroutine(flashCoroutine);
-                flashCoroutine = StartCoroutine(HitFlash());
-
                 TakeDamage((int)arrow.damage);
                 Destroy(collision.gameObject);
             }
@@ -204,8 +201,14 @@ public class EnemyArcher : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
+
         health -= damage;
-        if (health <= 0 && !isDead)
+
+        if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+        flashCoroutine = StartCoroutine(HitFlash());
+
+        if (health <= 0)
         {
             Die();
         }

@@ -11,58 +11,27 @@ public class FireballAbility : MonoBehaviour
 
     [Header("Visuals")]
     public Transform firePoint;
-    public GameObject throwIndicatorPrefab;
     public GameObject explosionPrefab;
 
     [Header("State")]
     public bool isUnlocked = true;
-    public bool isCharging = false;
 
     private float nextFireTime = 0f;
-    private GameObject currentIndicator;
 
-    // This is called by Send Messages (Action: "FIREBALL")
+    // This function name MUST match your Input Action (e.g., "FIREBALL")
     void OnFIREBALL(InputValue value)
     {
         if (!isUnlocked) return;
-        if (Time.time < nextFireTime && !isCharging) return;
+        if (Time.time < nextFireTime) return;
 
-        isCharging = !isCharging;
-
-        if (isCharging)
-        {
-            if (throwIndicatorPrefab != null && currentIndicator == null)
-            {
-                currentIndicator = Instantiate(throwIndicatorPrefab, firePoint.position, firePoint.rotation, firePoint);
-            }
-        }
-        else
-        {
-            if (currentIndicator != null)
-            {
-                Destroy(currentIndicator);
-            }
-        }
-    }
-
-    // This is called by Send Messages (Action: "Shoot")
-    void OnShoot()
-    {
-        if (!isCharging || !isUnlocked)
+        // Only run on the press-down frame
+        if (!value.isPressed)
         {
             return;
         }
-        if (Time.time < nextFireTime) return;
 
-        FireTheBall();
-
-        isCharging = false;
         nextFireTime = Time.time + fireballCooldown;
-
-        if (currentIndicator != null)
-        {
-            Destroy(currentIndicator);
-        }
+        FireTheBall();
     }
 
     void FireTheBall()

@@ -187,10 +187,8 @@ MonoBehaviour:
   fireballDamage: 25
   aoeRadius: 3
   firePoint: {fileID: 1693616192}
-  throwIndicatorPrefab: {fileID: 635361771592068906, guid: a2ac1c4d0877efd42bccfc76f5d839fa, type: 3}
   explosionPrefab: {fileID: 7135880642722605111, guid: 91663debcce42fb41a77492e36c46946, type: 3}
   isUnlocked: 1
-  isCharging: 0
 --- !u!1 &481055715
 GameObject:
   m_ObjectHideFlags: 0

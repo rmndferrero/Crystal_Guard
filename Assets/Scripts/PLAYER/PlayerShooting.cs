@@ -5,23 +5,20 @@ public class PlayerShooting : MonoBehaviour
 {
     public BowController bow;
     private bool isHoldingShoot = false;
-    private FireballAbility fireballAbility;
 
-    void Awake()
-    {
-        fireballAbility = GetComponent<FireballAbility>();
-    }
-
+    // This is called by Send Messages (Action: "Shoot")
     void OnShoot()
     {
         isHoldingShoot = true;
     }
 
+    // This is called by Send Messages (Action: "ShootRelease")
     void OnShootRelease()
     {
         isHoldingShoot = false;
     }
 
+    // This is called by Send Messages (Action: "Reload")
     void OnReload()
     {
         if (bow != null)
@@ -32,11 +29,6 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        if (fireballAbility != null && fireballAbility.isCharging)
-        {
-            return;
-        }
-
         if (isHoldingShoot && bow != null)
         {
             bow.Shoot();

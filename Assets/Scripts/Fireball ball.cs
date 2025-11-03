@@ -8,6 +8,7 @@ public class Fireball : MonoBehaviour
     public float damage = 50f;
     public float explosionRadius = 3f;
     public GameObject explosionEffect;
+    public GameObject burningGroundEffect;
 
     private Rigidbody rb;
 
@@ -20,15 +21,20 @@ public class Fireball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Explode();
+        Explode(collision.contacts[0].point);
         Destroy(gameObject);
     }
 
-    private void Explode()
+    private void Explode(Vector3 hitPosition)
     {
         if (explosionEffect != null)
         {
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+            Instantiate(explosionEffect, hitPosition, Quaternion.identity);
+        }
+
+        if (burningGroundEffect != null)
+        {
+            Instantiate(burningGroundEffect, hitPosition, Quaternion.identity);
         }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius);
