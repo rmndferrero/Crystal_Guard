@@ -105,7 +105,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 3
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -138,12 +138,13 @@ MonoBehaviour:
   walkPointRange: 10
   timeBetweenAttacks: 1
   attackDamage: 5
+  attackRange: 4
   modelRenderer: {fileID: 2233021296916567417}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
+  deathPoofPrefab: {fileID: 3548588485384254792, guid: 2f9e7dc163581394da1e00b561eed65d, type: 3}
   sightRange: 10
-  attackRange: 4
   playerInSightRange: 0
-  playerInAttackRange: 0
+  rotationSpeed: 5
 --- !u!54 &5320014185569845539
 Rigidbody:
   m_ObjectHideFlags: 0

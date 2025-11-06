@@ -1,7 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections.Generic;
 
 public class WaveManager : MonoBehaviour
 {
@@ -61,11 +62,10 @@ public class WaveManager : MonoBehaviour
         Wave wave = waves[currentWaveIndex];
         UpdateWaveUI(wave.name);
 
+        // Count all enemies
         enemiesAlive = 0;
         foreach (EnemyGroup group in wave.enemyGroups)
-        {
             enemiesAlive += group.count;
-        }
 
         // Failsafe for empty waves
         if (enemiesAlive == 0)
@@ -74,17 +74,31 @@ public class WaveManager : MonoBehaviour
             yield break;
         }
 
+        // ✅ Build a randomized spawn list of all enemies from all groups
+        List<GameObject> spawnList = new List<GameObject>();
         foreach (EnemyGroup group in wave.enemyGroups)
         {
             for (int i = 0; i < group.count; i++)
-            {
-                SpawnEnemy(group.enemyPrefab);
-                yield return new WaitForSeconds(1f / wave.spawnRate);
-            }
+                spawnList.Add(group.enemyPrefab);
+        }
+
+        // ✅ Shuffle the list (Fisher-Yates)
+        for (int i = 0; i < spawnList.Count; i++)
+        {
+            int rand = Random.Range(i, spawnList.Count);
+            (spawnList[i], spawnList[rand]) = (spawnList[rand], spawnList[i]);
+        }
+
+        // ✅ Spawn in randomized order
+        foreach (GameObject enemyPrefab in spawnList)
+        {
+            SpawnEnemy(enemyPrefab);
+            yield return new WaitForSeconds(1f / wave.spawnRate);
         }
 
         currentWaveIndex++;
     }
+
 
     void SpawnEnemy(GameObject enemyPrefab)
     {

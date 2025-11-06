@@ -11,92 +11,113 @@ public class EnemyArcher : MonoBehaviour
     public LayerMask Ground, Player;
     public float health = 100;
 
-    //Patroling
+    // Patroling
     public Vector3 walkPoint;
     bool walkPointSet;
-    public float walkPointRange;
+    public float walkPointRange = 10f;
 
-    //Attacking
-    public float timeBetweenAttacks;
+    // Attacking
+    public float timeBetweenAttacks = 2f;
     bool alreadyAttacked;
     public GameObject projectile;
     public Transform firePoint;
     public float projectileSpeed = 32f;
-    public float aimOffset = 0.5f;
+    public float aimHeightOffset = 1.4f;
 
-    //Hit Flash
+    // Hit Flash
     public Renderer modelRenderer;
     public Color hitColor = Color.red;
     private Color originalColor;
     private Coroutine flashCoroutine;
 
-    //States
-    public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    // Death
+    public GameObject deathPoofPrefab;
 
-    //Crystal Target
+    // States
+    public float sightRange = 25f;
+    public float attackRange = 15f;
+    public float playerAggroRange = 12f; // ✅ Player must get this close to distract the archer
+    private bool playerInSightRange, playerInAttackRange;
+
+    // Crystal Target
     private Transform crystal;
     private CrystalHealth crystalHealth;
 
     private Rigidbody rb;
     private bool isDead = false;
+    private Animator animator;
+    public float rotationSpeed = 5f;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
 
         rb.isKinematic = true;
         rb.freezeRotation = true;
 
         if (modelRenderer != null)
-        {
             originalColor = modelRenderer.material.color;
-        }
 
+        // Find Player
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
-            {
                 player = playerObj.transform;
-            }
         }
 
+        // Find Crystal
         crystalHealth = FindFirstObjectByType<CrystalHealth>();
         if (crystalHealth != null)
-        {
             crystal = crystalHealth.transform;
-        }
     }
 
     private void Update()
     {
-        if (isDead) return;
-        if (player == null) return;
-        if (!agent.isOnNavMesh) return;
+        if (isDead || !agent.isOnNavMesh) return;
 
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+        if (animator != null)
+            animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
 
-        if (playerInSightRange && !playerInAttackRange)
+        // Update state checks
+        playerInSightRange = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
+        playerInAttackRange = player != null && Physics.CheckSphere(transform.position, attackRange, Player);
+
+        // ✅ Target Priority Logic
+        if (crystal != null)
         {
-            ChasePlayer();
-        }
-        else if (playerInAttackRange && playerInSightRange)
-        {
-            AttackPlayer();
-        }
-        else
-        {
-            if (crystal != null)
+            float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
+            float distanceToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : Mathf.Infinity;
+
+            // ✅ Prioritize crystal unless player is dangerously close
+            if (distanceToPlayer < playerAggroRange && distanceToPlayer < distanceToCrystal)
             {
-                ChaseCrystal();
+                // Player is close enough — fight back
+                if (playerInAttackRange)
+                    AttackPlayer();
+                else
+                    ChasePlayer();
             }
             else
             {
-                Patroling();
+                // Focus crystal
+                if (distanceToCrystal <= attackRange)
+                    AttackCrystal();
+                else
+                    ChaseCrystal();
             }
+        }
+        else
+        {
+            // No crystal found, just chase player or patrol
+            if (playerInSightRange && playerInAttackRange)
+                AttackPlayer();
+            else if (playerInSightRange)
+                ChasePlayer();
+            else
+                Patroling();
         }
     }
 
@@ -122,9 +143,7 @@ public class EnemyArcher : MonoBehaviour
         if (walkPointSet)
             agent.SetDestination(walkPoint);
 
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-
-        if (distanceToWalkPoint.magnitude < 1f)
+        if (Vector3.Distance(transform.position, walkPoint) < 1f)
             walkPointSet = false;
     }
 
@@ -133,8 +152,7 @@ public class EnemyArcher : MonoBehaviour
         Vector3 randomDirection = Random.insideUnitSphere * walkPointRange;
         randomDirection += transform.position;
 
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, walkPointRange, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, walkPointRange, NavMesh.AllAreas))
         {
             walkPoint = hit.position;
             walkPointSet = true;
@@ -143,6 +161,7 @@ public class EnemyArcher : MonoBehaviour
 
     private void ChasePlayer()
     {
+        if (player == null) return;
         agent.SetDestination(player.position);
     }
 
@@ -150,48 +169,69 @@ public class EnemyArcher : MonoBehaviour
     {
         if (crystal == null) return;
         agent.SetDestination(crystal.position);
-        float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
-
-        if (distanceToCrystal <= agent.stoppingDistance)
-        {
-            AttackCrystal();
-        }
     }
 
     private void AttackPlayer()
     {
+        if (alreadyAttacked || player == null) return;
         agent.SetDestination(transform.position);
-        transform.LookAt(player);
 
-        if (!alreadyAttacked)
-        {
-            Vector3 targetPosition = new Vector3(player.position.x, player.position.y + aimOffset, player.position.z);
-            Vector3 direction = (targetPosition - firePoint.position).normalized;
+        RotateTowards(player.position);
 
-            Rigidbody rb_proj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(direction)).GetComponent<Rigidbody>();
-            rb_proj.AddForce(direction * projectileSpeed, ForceMode.Impulse);
+        if (animator != null) animator.SetTrigger("Attack");
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
-        }
+        Vector3 targetPosition = player.position + Vector3.up * aimHeightOffset;
+        FireArrow(targetPosition);
+
+        alreadyAttacked = true;
+        Invoke(nameof(ResetAttack), timeBetweenAttacks);
     }
 
     private void AttackCrystal()
     {
-        if (crystal == null) return;
+        if (alreadyAttacked || crystal == null) return;
         agent.SetDestination(transform.position);
-        transform.LookAt(crystal);
 
-        if (!alreadyAttacked)
+        RotateTowards(crystal.position);
+
+        if (animator != null) animator.SetTrigger("Attack");
+
+        Vector3 targetPosition = crystal.position + Vector3.up * 0.5f;
+        FireArrow(targetPosition);
+
+        alreadyAttacked = true;
+        Invoke(nameof(ResetAttack), timeBetweenAttacks);
+    }
+
+    private void FireArrow(Vector3 target)
+    {
+        Vector3 fireDirection = (target - firePoint.position).normalized;
+
+        GameObject arrowObj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(fireDirection));
+        Rigidbody rb_proj = arrowObj.GetComponent<Rigidbody>();
+        Arrow arrowScript = arrowObj.GetComponent<Arrow>();
+
+        if (arrowScript != null)
         {
-            Vector3 direction = (crystal.position - firePoint.position).normalized;
-
-            Rigidbody rb_proj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(direction)).GetComponent<Rigidbody>();
-            rb_proj.AddForce(direction * projectileSpeed, ForceMode.Impulse);
-
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            arrowScript.ownerTag = "Enemy"; // ✅ ensures damage goes to crystal or player
+            arrowScript.damage = 10f;
         }
+
+        if (rb_proj != null)
+        {
+#if UNITY_6000_0_OR_NEWER
+            rb_proj.linearVelocity = fireDirection * projectileSpeed;
+#else
+            rb_proj.velocity = fireDirection * projectileSpeed;
+#endif
+        }
+    }
+
+    private void RotateTowards(Vector3 targetPos)
+    {
+        Vector3 direction = (targetPos - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 
     private void ResetAttack()
@@ -209,23 +249,21 @@ public class EnemyArcher : MonoBehaviour
         flashCoroutine = StartCoroutine(HitFlash());
 
         if (health <= 0)
-        {
             Die();
-        }
     }
 
     private void Die()
     {
         isDead = true;
-        agent.enabled = false;
 
-        rb.isKinematic = false;
-        rb.freezeRotation = false;
+        if (deathPoofPrefab != null)
+            Instantiate(deathPoofPrefab, transform.position, Quaternion.identity);
 
         WaveManager waveManager = FindFirstObjectByType<WaveManager>();
-        if (waveManager != null) waveManager.OnEnemyDied();
+        if (waveManager != null)
+            waveManager.OnEnemyDied();
 
-        Destroy(gameObject, 4f);
+        Destroy(gameObject);
     }
 
     IEnumerator HitFlash()
@@ -244,5 +282,7 @@ public class EnemyArcher : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, playerAggroRange);
     }
 }

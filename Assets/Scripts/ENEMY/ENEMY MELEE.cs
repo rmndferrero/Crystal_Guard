@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
@@ -11,159 +11,141 @@ public class MeleeEnemyAI : MonoBehaviour
     public LayerMask Ground, Player;
     public float health = 100;
 
-    //Patroling
+    // Patroling
     public Vector3 walkPoint;
     bool walkPointSet;
     public float walkPointRange;
 
-    //Attacking
-    public float timeBetweenAttacks;
+    // Attacking
+    public float timeBetweenAttacks = 1f;
     public int attackDamage = 15;
+    public float attackRange = 2f;
     bool alreadyAttacked;
+    private Transform currentTarget;
 
-    //Hit Flash
+    // Hit Flash
     public Renderer modelRenderer;
     public Color hitColor = Color.red;
     private Color originalColor;
     private Coroutine flashCoroutine;
 
-    //States
-    public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    // Death
+    public GameObject deathPoofPrefab;
 
-    //Crystal Target
+    // States
+    public float sightRange = 10f;
+    public bool playerInSightRange;
+
+    // Crystal Target
     private Transform crystal;
     private CrystalHealth crystalHealth;
 
     private Rigidbody rb;
     private bool isDead = false;
+    private Animator animator;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
 
         rb.isKinematic = true;
         rb.freezeRotation = true;
 
         if (modelRenderer != null)
-        {
             originalColor = modelRenderer.material.color;
-        }
 
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null)
-            {
                 player = playerObj.transform;
-            }
         }
 
         crystalHealth = FindFirstObjectByType<CrystalHealth>();
         if (crystalHealth != null)
-        {
             crystal = crystalHealth.transform;
-        }
     }
 
     private void Update()
     {
-        if (isDead) return;
-        if (player == null) return;
-        if (!agent.isOnNavMesh) return;
+        if (isDead || !agent.isOnNavMesh) return;
 
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+        if (animator != null)
+            animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
 
-        if (playerInSightRange && !playerInAttackRange)
+        playerInSightRange = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
+
+        // Choose target priority
+        if (playerInSightRange)
+            currentTarget = player;
+        else if (crystal != null)
+            currentTarget = crystal;
+        else
+            currentTarget = null;
+
+        if (currentTarget == null) return;
+
+        float distance = Vector3.Distance(transform.position, currentTarget.position);
+
+        if (distance > attackRange)
         {
-            ChasePlayer();
-        }
-        else if (playerInAttackRange && playerInSightRange)
-        {
-            AttackPlayer();
+            ChaseTarget();
         }
         else
         {
-            if (crystal != null)
-            {
-                ChaseCrystal();
-            }
+            AttackTarget();
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void ChaseTarget()
     {
-        if (isDead) return;
+        if (currentTarget == null) return;
 
-        if (collision.gameObject.CompareTag("Damage"))
+        agent.isStopped = false;
+        agent.SetDestination(currentTarget.position);
+    }
+
+    private void AttackTarget()
+    {
+        if (alreadyAttacked || currentTarget == null) return;
+
+        agent.isStopped = true;
+
+        // Smoothly rotate to face target
+        Vector3 dir = (currentTarget.position - transform.position).normalized;
+        dir.y = 0f;
+        if (dir != Vector3.zero)
         {
-            Arrow arrow = collision.gameObject.GetComponent<Arrow>();
-            if (arrow != null)
-            {
-                TakeDamage((int)arrow.damage);
-                Destroy(collision.gameObject);
-            }
+            Quaternion lookRot = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 10f);
         }
-    }
 
-    private void ChaseCrystal()
-    {
-        if (crystal == null) return;
-        agent.SetDestination(crystal.position);
-        float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
+        // Play animation
+        if (animator != null)
+            animator.SetTrigger("Attack");
 
-        if (distanceToCrystal <= agent.stoppingDistance)
+        // Apply damage
+        if (currentTarget.CompareTag("Player"))
         {
-            AttackCrystal();
+            PlayerHealth ph = currentTarget.GetComponent<PlayerHealth>();
+            if (ph != null) ph.TakeDamage(attackDamage);
         }
-    }
-
-    private void ChasePlayer()
-    {
-        agent.SetDestination(player.position);
-    }
-
-    private void AttackPlayer()
-    {
-        agent.SetDestination(transform.position);
-        transform.LookAt(player);
-
-        if (!alreadyAttacked)
-        {
-            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(attackDamage);
-            }
-
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
-        }
-    }
-
-    private void AttackCrystal()
-    {
-        if (crystal == null) return;
-        agent.SetDestination(transform.position);
-        transform.LookAt(crystal);
-
-        if (!alreadyAttacked)
+        else if (currentTarget.CompareTag("Crystal"))
         {
             if (crystalHealth != null)
-            {
                 crystalHealth.TakeDamage(attackDamage);
-            }
-
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
+
+        alreadyAttacked = true;
+        Invoke(nameof(ResetAttack), timeBetweenAttacks);
     }
 
     private void ResetAttack()
     {
         alreadyAttacked = false;
+        agent.isStopped = false;
     }
 
     public void TakeDamage(int damage)
@@ -175,24 +157,20 @@ public class MeleeEnemyAI : MonoBehaviour
         if (flashCoroutine != null) StopCoroutine(flashCoroutine);
         flashCoroutine = StartCoroutine(HitFlash());
 
-        if (health <= 0)
-        {
-            Die();
-        }
+        if (health <= 0) Die();
     }
 
     private void Die()
     {
         isDead = true;
-        agent.enabled = false;
 
-        rb.isKinematic = false;
-        rb.freezeRotation = false;
+        if (deathPoofPrefab != null)
+            Instantiate(deathPoofPrefab, transform.position, Quaternion.identity);
 
         WaveManager waveManager = FindFirstObjectByType<WaveManager>();
         if (waveManager != null) waveManager.OnEnemyDied();
 
-        Destroy(gameObject, 4f);
+        Destroy(gameObject);
     }
 
     IEnumerator HitFlash()

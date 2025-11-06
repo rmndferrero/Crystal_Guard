@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class BowController : MonoBehaviour
@@ -38,21 +38,30 @@ public class BowController : MonoBehaviour
         nextTimeToFire = Time.time + fireRate;
         currentAmmo--;
 
+        // ✅ Spawn arrow
         GameObject arrowObj = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
 
+        // ✅ Assign arrow properties safely
         Arrow arrowScript = arrowObj.GetComponent<Arrow>();
         if (arrowScript != null)
         {
             arrowScript.damage = this.arrowDamage;
+            arrowScript.ownerTag = "Player"; // <<< The important fix!
+        }
+
+        // ✅ Optional: add small force if needed
+        Rigidbody rb = arrowObj.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = arrowSpawnPoint.forward * 50f;
         }
     }
 
     public void TryReload()
     {
         if (isReloading || currentAmmo == quiverSize)
-        {
             return;
-        }
+
         StartCoroutine(Reload());
     }
 
@@ -72,7 +81,6 @@ public class BowController : MonoBehaviour
         }
 
         t = 0f;
-
         while (t < halfReload)
         {
             t += Time.deltaTime;

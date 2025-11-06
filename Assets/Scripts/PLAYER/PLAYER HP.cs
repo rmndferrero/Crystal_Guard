@@ -7,6 +7,9 @@ public class PlayerHealth : MonoBehaviour
     public float currentHealth;
     public Slider healthSlider;
 
+    public DamageVignette damageVignette;
+    public Color playerHitColor = Color.red;
+
     private WaveManager waveManager;
 
     void Start()
@@ -30,21 +33,15 @@ public class PlayerHealth : MonoBehaviour
             healthSlider.value = currentHealth;
         }
 
+        if (damageVignette != null)
+        {
+            damageVignette.Flash(playerHitColor);
+        }
+
         if (currentHealth <= 0)
         {
             Die();
         }
-    }
-
-    void Die()
-    {
-        if (waveManager != null)
-        {
-            waveManager.HandleLose();
-        }
-
-        GetComponent<PlayerMovement>().enabled = false;
-        GetComponent<PlayerLook>().enabled = false;
     }
 
     public void Heal(float amount)
@@ -59,5 +56,16 @@ public class PlayerHealth : MonoBehaviour
         {
             healthSlider.value = currentHealth;
         }
+    }
+
+    void Die()
+    {
+        if (waveManager != null)
+        {
+            waveManager.HandleLose();
+        }
+
+        GetComponent<PlayerMovement>().enabled = false;
+        GetComponent<PlayerLook>().enabled = false;
     }
 }

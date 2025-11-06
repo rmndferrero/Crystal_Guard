@@ -7,6 +7,9 @@ public class CrystalHealth : MonoBehaviour
     public float currentHealth;
     public Slider healthSlider;
 
+    public DamageVignette damageVignette;
+    public Color crystalHitColor = Color.blue;
+
     private WaveManager waveManager;
 
     void Start()
@@ -30,20 +33,15 @@ public class CrystalHealth : MonoBehaviour
             healthSlider.value = currentHealth;
         }
 
+        if (damageVignette != null)
+        {
+            damageVignette.Flash(crystalHitColor);
+        }
+
         if (currentHealth <= 0)
         {
             Die();
         }
-    }
-
-    void Die()
-    {
-        if (waveManager != null)
-        {
-            waveManager.HandleLose();
-        }
-
-        Destroy(gameObject);
     }
 
     public void Heal(float amount)
@@ -58,5 +56,15 @@ public class CrystalHealth : MonoBehaviour
         {
             healthSlider.value = currentHealth;
         }
+    }
+
+    void Die()
+    {
+        if (waveManager != null)
+        {
+            waveManager.HandleLose();
+        }
+
+        Destroy(gameObject);
     }
 }
