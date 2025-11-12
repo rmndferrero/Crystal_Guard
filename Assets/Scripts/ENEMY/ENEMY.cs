@@ -48,11 +48,18 @@ public class EnemyArcher : MonoBehaviour
     private Animator animator;
     public float rotationSpeed = 5f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip attackSFX;
+    public AudioClip deathSFX;
+    public AudioClip hitSFX;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
+        audioSource = GetComponent<AudioSource>();
 
         rb.isKinematic = true;
         rb.freezeRotation = true;
@@ -180,6 +187,9 @@ public class EnemyArcher : MonoBehaviour
 
         if (animator != null) animator.SetTrigger("Attack");
 
+        if (audioSource != null && attackSFX != null)
+            audioSource.PlayOneShot(attackSFX);
+
         Vector3 targetPosition = player.position + Vector3.up * aimHeightOffset;
         FireArrow(targetPosition);
 
@@ -195,6 +205,9 @@ public class EnemyArcher : MonoBehaviour
         RotateTowards(crystal.position);
 
         if (animator != null) animator.SetTrigger("Attack");
+
+        if (audioSource != null && attackSFX != null)
+            audioSource.PlayOneShot(attackSFX);
 
         Vector3 targetPosition = crystal.position + Vector3.up * 0.5f;
         FireArrow(targetPosition);
@@ -245,11 +258,15 @@ public class EnemyArcher : MonoBehaviour
 
         health -= damage;
 
+        if (audioSource != null && hitSFX != null)
+            audioSource.PlayOneShot(hitSFX);
+
         if (flashCoroutine != null) StopCoroutine(flashCoroutine);
         flashCoroutine = StartCoroutine(HitFlash());
 
         if (health <= 0)
             Die();
+
     }
 
     private void Die()
@@ -262,6 +279,11 @@ public class EnemyArcher : MonoBehaviour
         WaveManager waveManager = FindFirstObjectByType<WaveManager>();
         if (waveManager != null)
             waveManager.OnEnemyDied();
+
+        if (deathSFX != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSFX, transform.position);
+        }
 
         Destroy(gameObject);
     }

@@ -767,7 +767,7 @@ MonoBehaviour:
   gameMusic: {fileID: 8300000, guid: 77dc4732fe1ac8040827da3ba15e613b, type: 3}
   winMusic: {fileID: 8300000, guid: 513197e4ea0798a4aa5c273b234bf22b, type: 3}
   loseMusic: {fileID: 8300000, guid: aa4e226f4ddbf5d47900ac09bef565c4, type: 3}
-  musicVolume: 0.7
+  musicVolume: 0.3
   fadeDuration: 1
 --- !u!1 &1281239778
 GameObject:

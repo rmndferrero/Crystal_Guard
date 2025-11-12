@@ -44,11 +44,19 @@ public class MeleeEnemyAI : MonoBehaviour
     private bool isDead = false;
     private Animator animator;
 
+    // --- Sound Effects ---
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip attackSFX;
+    public AudioClip deathSFX;
+    public AudioClip hitSFX;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
+        audioSource = GetComponent<AudioSource>();
 
         rb.isKinematic = true;
         rb.freezeRotation = true;
@@ -126,6 +134,9 @@ public class MeleeEnemyAI : MonoBehaviour
         if (animator != null)
             animator.SetTrigger("Attack");
 
+        if (audioSource != null && attackSFX != null)
+            audioSource.PlayOneShot(attackSFX);
+
         // Apply damage
         if (currentTarget.CompareTag("Player"))
         {
@@ -154,6 +165,9 @@ public class MeleeEnemyAI : MonoBehaviour
 
         health -= damage;
 
+        if (audioSource != null && hitSFX != null)
+            audioSource.PlayOneShot(hitSFX);
+
         if (flashCoroutine != null) StopCoroutine(flashCoroutine);
         flashCoroutine = StartCoroutine(HitFlash());
 
@@ -169,6 +183,11 @@ public class MeleeEnemyAI : MonoBehaviour
 
         WaveManager waveManager = FindFirstObjectByType<WaveManager>();
         if (waveManager != null) waveManager.OnEnemyDied();
+
+        if (deathSFX != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSFX, transform.position);
+        }
 
         Destroy(gameObject);
     }

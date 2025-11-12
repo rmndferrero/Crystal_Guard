@@ -18,6 +18,11 @@ public class BowController : MonoBehaviour
     private Quaternion initialRotation;
     private Vector3 reloadRotationOffset = new Vector3(30, 0, 0);
 
+    [Header("Audio")]
+    public AudioClip shootSound;    // assign this in the inspector
+    public float shootVolume = 1f;  // optional, default 1.0
+
+
     void Start()
     {
         currentAmmo = quiverSize;
@@ -33,6 +38,11 @@ public class BowController : MonoBehaviour
         {
             TryReload();
             return;
+        }
+
+        if (shootSound != null)
+        {
+            AudioSource.PlayClipAtPoint(shootSound, arrowSpawnPoint.position, shootVolume);
         }
 
         nextTimeToFire = Time.time + fireRate;
