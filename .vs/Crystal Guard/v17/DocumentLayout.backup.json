@@ -3,7 +3,11 @@
   "WorkspaceRootPath": "C:\\Users\\admin\\Crystal Guard\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\player\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|C:\\Users\\admin\\Crystal Guard\\assets\\scripts\\player\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\player hp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -19,15 +23,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "WAVE.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\WAVE\\WAVE.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\WAVE\\WAVE.cs",
+              "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\WAVE\\WAVE.cs",
+              "RelativeToolTip": "Assets\\Scripts\\WAVE\\WAVE.cs",
+              "ViewState": "AgIAAIMAAAAAAAAAAAAcwKkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T02:10:40.111Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "PLAYER HP.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\PLAYER HP.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PLAYER\\PLAYER HP.cs",
               "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\PLAYER HP.cs",
               "RelativeToolTip": "Assets\\Scripts\\PLAYER\\PLAYER HP.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAUwCYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACUAAAAAAAAAAAAgwDEAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-03T06:35:38.766Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-03T06:35:38.766Z"
             }
           ]
         }

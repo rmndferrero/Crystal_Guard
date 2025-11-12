@@ -148,6 +148,9 @@ public class WaveManager : MonoBehaviour
     {
         if (gameIsOver) return;
         gameIsOver = true;
+
+        AudioManager.Instance?.PlayWinMusic();
+
         if (winScreen) winScreen.SetActive(true);
         Time.timeScale = 0f;
     }
@@ -156,6 +159,9 @@ public class WaveManager : MonoBehaviour
     {
         if (gameIsOver) return;
         gameIsOver = true;
+
+        AudioManager.Instance?.PlayLoseMusic();
+
         if (loseScreen) loseScreen.SetActive(true);
         Time.timeScale = 0f;
     }
