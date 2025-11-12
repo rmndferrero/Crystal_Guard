@@ -21,11 +21,13 @@ public class WaveManager : MonoBehaviour
         public float spawnRate;
     }
 
+    [Header("Wave Settings")]
     public Wave[] waves;
     public Transform[] spawnPoints;
+
+    [Header("References")]
     public CrystalHealth crystal;
     public PlayerHealth player;
-
     public TextMeshProUGUI waveText;
     public GameObject winScreen;
     public GameObject loseScreen;
@@ -44,6 +46,9 @@ public class WaveManager : MonoBehaviour
         if (player == null) player = FindFirstObjectByType<PlayerHealth>();
 
         Time.timeScale = 1f;
+
+        // ✅ Always start at wave 0 explicitly (so indexing is reliable)
+        currentWaveIndex = 0;
         StartCoroutine(SpawnNextWave());
     }
 
@@ -59,22 +64,29 @@ public class WaveManager : MonoBehaviour
 
     IEnumerator SpawnNextWave()
     {
+        // ✅ Prevent index out of range
+        if (currentWaveIndex >= waves.Length)
+        {
+            HandleWin();
+            yield break;
+        }
+
         Wave wave = waves[currentWaveIndex];
         UpdateWaveUI(wave.name);
 
-        // Count all enemies
+        // Count total enemies for this wave
         enemiesAlive = 0;
         foreach (EnemyGroup group in wave.enemyGroups)
             enemiesAlive += group.count;
 
-        // Failsafe for empty waves
-        if (enemiesAlive == 0)
+        // Failsafe for empty wave
+        if (enemiesAlive <= 0)
         {
             OnEnemyDied();
             yield break;
         }
 
-        // ✅ Build a randomized spawn list of all enemies from all groups
+        // ✅ Randomize spawn order
         List<GameObject> spawnList = new List<GameObject>();
         foreach (EnemyGroup group in wave.enemyGroups)
         {
@@ -82,29 +94,28 @@ public class WaveManager : MonoBehaviour
                 spawnList.Add(group.enemyPrefab);
         }
 
-        // ✅ Shuffle the list (Fisher-Yates)
         for (int i = 0; i < spawnList.Count; i++)
         {
             int rand = Random.Range(i, spawnList.Count);
             (spawnList[i], spawnList[rand]) = (spawnList[rand], spawnList[i]);
         }
 
-        // ✅ Spawn in randomized order
+        // ✅ Spawn enemies in randomized order
         foreach (GameObject enemyPrefab in spawnList)
         {
             SpawnEnemy(enemyPrefab);
             yield return new WaitForSeconds(1f / wave.spawnRate);
         }
 
+        // ✅ Wave complete: increment AFTER spawn finishes
         currentWaveIndex++;
     }
-
 
     void SpawnEnemy(GameObject enemyPrefab)
     {
         if (spawnPoints.Length == 0) return;
         Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        GameObject newEnemy = Instantiate(enemyPrefab, randomSpawnPoint.position, randomSpawnPoint.rotation);
+        Instantiate(enemyPrefab, randomSpawnPoint.position, randomSpawnPoint.rotation);
     }
 
     public void OnEnemyDied()
@@ -113,27 +124,33 @@ public class WaveManager : MonoBehaviour
 
         if (enemiesAlive > 0) return;
 
-        if (enemiesAlive == 0 && currentWaveIndex == waves.Length)
+        // ✅ All enemies defeated
+        if (currentWaveIndex >= waves.Length)
         {
             HandleWin();
         }
-        else if (enemiesAlive == 0 && currentWaveIndex < waves.Length)
+        else
         {
-            // --- THIS IS THE FIX ---
-            // We show the upgrade screen INSTEAD of starting the next wave.
-            if (upgradeManager != null)
-            {
-                upgradeManager.ShowUpgradeScreen();
-            }
-            else
-            {
-                // Failsafe if you forgot the upgrade manager
-                StartCoroutine(SpawnNextWave());
-            }
+            // ✅ Wait a brief moment for clarity before showing upgrades
+            StartCoroutine(HandleWaveCompletion());
         }
     }
 
-    // This is called by the UpgradeManager after an upgrade is chosen
+    IEnumerator HandleWaveCompletion()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        if (upgradeManager != null)
+        {
+            upgradeManager.ShowUpgradeScreen();
+        }
+        else
+        {
+            StartCoroutine(SpawnNextWave());
+        }
+    }
+
+    // Called by UpgradeManager after choosing an upgrade
     public void StartNextWaveCoroutine()
     {
         StartCoroutine(SpawnNextWave());
@@ -150,7 +167,6 @@ public class WaveManager : MonoBehaviour
         gameIsOver = true;
 
         AudioManager.Instance?.PlayWinMusic();
-
         if (winScreen) winScreen.SetActive(true);
         Time.timeScale = 0f;
     }
@@ -161,7 +177,6 @@ public class WaveManager : MonoBehaviour
         gameIsOver = true;
 
         AudioManager.Instance?.PlayLoseMusic();
-
         if (loseScreen) loseScreen.SetActive(true);
         Time.timeScale = 0f;
     }
@@ -169,8 +184,6 @@ public class WaveManager : MonoBehaviour
     void UpdateWaveUI(string text)
     {
         if (waveText != null)
-        {
             waveText.text = text;
-        }
     }
 }

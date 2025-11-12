@@ -67,21 +67,27 @@ public class UpgradeManager : MonoBehaviour
     {
         int waveIndex = waveManager.GetCurrentWaveIndex();
 
-        // Fireball unlock guaranteed on the first wave (waveIndex 0)
-        if (waveIndex == 0 && !fireballUnlockedOnce)
+        // ✅ Guaranteed Fireball Unlock after first wave (whether waveIndex starts at 0 or 1)
+        bool isFirstWaveFinished = (!fireballUnlockedOnce && (waveIndex == 1 || waveIndex == 0));
+
+        if (isFirstWaveFinished)
         {
             fireballUnlockedOnce = true;
-            StartCoroutine(ShowFireballUnlock());
-            return; // Prevent random upgrades from showing
+            StartCoroutine(ShowFireballUnlockSmooth());
+            return;
         }
 
-        // All other waves: show random upgrades
+        // Otherwise, show normal upgrades
         ShowRandomUpgrades();
     }
 
-    IEnumerator ShowFireballUnlock()
+    IEnumerator ShowFireballUnlockSmooth()
     {
-        PauseGame(false);
+        // Smooth unlock — no slow motion or lag
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         fireballUnlockScreen.SetActive(true);
 
         if (fireballAbility != null)
@@ -92,7 +98,8 @@ public class UpgradeManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(3f);
 
         fireballUnlockScreen.SetActive(false);
-        UnpauseGame();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         if (waveManager != null)
         {
@@ -136,7 +143,7 @@ public class UpgradeManager : MonoBehaviour
     {
         List<string> availableUpgrades = new List<string>(upgradePool);
 
-        // Ensure Fireball Damage+ doesn't appear if ability not unlocked yet
+        // Remove Fireball Damage+ until unlocked
         if (fireballAbility != null && !fireballAbility.isUnlocked)
         {
             availableUpgrades.Remove("Fireball Damage+");
