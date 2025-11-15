@@ -10,14 +10,6 @@ public class UpgradeManager : MonoBehaviour
     public GameObject upgradeScreen;
     public GameObject fireballUnlockScreen;
 
-    [Header("Upgrade Info Panels (Optional)")]
-    public GameObject damageBoostPanel;
-    public GameObject hpRegenPanel;
-    public GameObject crystalHealPanel;
-    public GameObject moveSpeedPanel;
-    public GameObject dashCooldownPanel;
-    public GameObject fireballDamagePanel;
-
     [Header("Upgrade Buttons")]
     public Button upgradeButton1;
     public Button upgradeButton2;
@@ -48,7 +40,6 @@ public class UpgradeManager : MonoBehaviour
         upgradeScreen.SetActive(false);
         fireballUnlockScreen.SetActive(false);
 
-        HideAllUpgradePanels();
         PopulateUpgradePool();
     }
 
@@ -67,44 +58,29 @@ public class UpgradeManager : MonoBehaviour
     {
         int waveIndex = waveManager.GetCurrentWaveIndex();
 
-        // ✅ Guaranteed Fireball Unlock after first wave (whether waveIndex starts at 0 or 1)
-        bool isFirstWaveFinished = (!fireballUnlockedOnce && (waveIndex == 1 || waveIndex == 0));
-
-        if (isFirstWaveFinished)
+        if (!fireballUnlockedOnce && (waveIndex == 0 || waveIndex == 1))
         {
             fireballUnlockedOnce = true;
             StartCoroutine(ShowFireballUnlockSmooth());
             return;
         }
 
-        // Otherwise, show normal upgrades
         ShowRandomUpgrades();
     }
 
     IEnumerator ShowFireballUnlockSmooth()
     {
-        // Smooth unlock — no slow motion or lag
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
+        PauseGame(false);
         fireballUnlockScreen.SetActive(true);
 
         if (fireballAbility != null)
-        {
             fireballAbility.isUnlocked = true;
-        }
 
         yield return new WaitForSecondsRealtime(3f);
 
         fireballUnlockScreen.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        if (waveManager != null)
-        {
-            waveManager.StartNextWaveCoroutine();
-        }
+        UnpauseGame();
+        waveManager.StartNextWaveCoroutine();
     }
 
     void ShowRandomUpgrades()
@@ -113,12 +89,31 @@ public class UpgradeManager : MonoBehaviour
         upgradeScreen.SetActive(true);
 
         List<string> options = GetRandomUpgrades(3);
-        if (options.Count >= 3)
+
+        // --- THIS IS THE FIX for the "randomization" bug/crash ---
+
+        // First, hide all buttons
+        upgradeButton1.gameObject.SetActive(false);
+        upgradeButton2.gameObject.SetActive(false);
+        upgradeButton3.gameObject.SetActive(false);
+
+        // Only show and set up buttons if we have an upgrade for them
+        if (options.Count >= 1)
         {
             SetupButton(upgradeButton1, options[0]);
-            SetupButton(upgradeButton2, options[1]);
-            SetupButton(upgradeButton3, options[2]);
+            upgradeButton1.gameObject.SetActive(true);
         }
+        if (options.Count >= 2)
+        {
+            SetupButton(upgradeButton2, options[1]);
+            upgradeButton2.gameObject.SetActive(true);
+        }
+        if (options.Count >= 3)
+        {
+            SetupButton(upgradeButton3, options[2]);
+            upgradeButton3.gameObject.SetActive(true);
+        }
+        // --- END OF FIX ---
     }
 
     void PauseGame(bool showCursor)
@@ -141,99 +136,75 @@ public class UpgradeManager : MonoBehaviour
 
     List<string> GetRandomUpgrades(int count)
     {
-        List<string> availableUpgrades = new List<string>(upgradePool);
+        List<string> available = new List<string>(upgradePool);
 
-        // Remove Fireball Damage+ until unlocked
         if (fireballAbility != null && !fireballAbility.isUnlocked)
+            available.Remove("Fireball Damage+");
+
+        List<string> chosen = new List<string>();
+
+        for (int i = 0; i < count; i++)
         {
-            availableUpgrades.Remove("Fireball Damage+");
+            if (available.Count == 0) break;
+
+            int idx = Random.Range(0, available.Count);
+            chosen.Add(available[idx]);
+            available.RemoveAt(idx);
         }
 
-        List<string> chosenUpgrades = new List<string>();
-        int iterations = Mathf.Min(count, availableUpgrades.Count);
-
-        for (int i = 0; i < iterations; i++)
-        {
-            int index = Random.Range(0, availableUpgrades.Count);
-            chosenUpgrades.Add(availableUpgrades[index]);
-            availableUpgrades.RemoveAt(index);
-        }
-
-        return chosenUpgrades;
+        return chosen;
     }
 
     void SetupButton(Button button, string upgradeType)
     {
         button.onClick.RemoveAllListeners();
-        button.GetComponentInChildren<TextMeshProUGUI>().text = upgradeType;
+
+        TextMeshProUGUI tmp = button.GetComponentInChildren<TextMeshProUGUI>();
+
+        // --- THIS IS THE "CAPSLOCK" FIX ---
+        tmp.text = upgradeType.ToUpper();
+        // --- END OF FIX ---
+
         button.onClick.AddListener(() => ApplyUpgrade(upgradeType));
     }
 
     void ApplyUpgrade(string upgradeType)
     {
+        // Note: The switch checks the original (non-capslock) name
         switch (upgradeType)
         {
             case "Bow Damage+":
-                if (bowController != null) bowController.arrowDamage += 5f;
-                ShowUpgradePanel(damageBoostPanel);
+                bowController.arrowDamage += 5f;
                 break;
+
             case "Fireball Damage+":
-                if (fireballAbility != null) fireballAbility.fireballDamage += 10f;
-                ShowUpgradePanel(fireballDamagePanel);
+                fireballAbility.fireballDamage += 10f;
                 break;
+
             case "Player HP Regain":
-                if (playerHealth != null) playerHealth.Heal(25f);
-                ShowUpgradePanel(hpRegenPanel);
+                playerHealth.Heal(25f);
                 break;
+
             case "Crystal HP Regain":
-                if (crystalHealth != null) crystalHealth.Heal(100f);
-                ShowUpgradePanel(crystalHealPanel);
+                crystalHealth.Heal(100f);
                 break;
+
             case "Move Speed+":
-                if (playerMovement != null) playerMovement.moveSpeed += 2f;
-                ShowUpgradePanel(moveSpeedPanel);
+                playerMovement.moveSpeed += 2f;
                 break;
+
             case "Dash Cooldown-":
-                if (playerMovement != null) playerMovement.dashCooldown *= 0.8f;
-                ShowUpgradePanel(dashCooldownPanel);
+                playerMovement.dashCooldown *= 0.8f;
                 break;
         }
 
         HideUpgradeScreen();
     }
 
-    void ShowUpgradePanel(GameObject panel)
-    {
-        if (panel == null) return;
-        StartCoroutine(ShowPanelTemporarily(panel, 2f));
-    }
-
-    IEnumerator ShowPanelTemporarily(GameObject panel, float duration)
-    {
-        HideAllUpgradePanels();
-        panel.SetActive(true);
-        yield return new WaitForSecondsRealtime(duration);
-        panel.SetActive(false);
-    }
-
-    void HideAllUpgradePanels()
-    {
-        if (damageBoostPanel != null) damageBoostPanel.SetActive(false);
-        if (fireballDamagePanel != null) fireballDamagePanel.SetActive(false);
-        if (hpRegenPanel != null) hpRegenPanel.SetActive(false);
-        if (crystalHealPanel != null) crystalHealPanel.SetActive(false);
-        if (moveSpeedPanel != null) moveSpeedPanel.SetActive(false);
-        if (dashCooldownPanel != null) dashCooldownPanel.SetActive(false);
-    }
-
     void HideUpgradeScreen()
     {
         upgradeScreen.SetActive(false);
         UnpauseGame();
-
-        if (waveManager != null)
-        {
-            waveManager.StartNextWaveCoroutine();
-        }
+        waveManager.StartNextWaveCoroutine();
     }
 }
