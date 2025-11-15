@@ -120,14 +120,12 @@ public class EnemyArcher : MonoBehaviour
         }
     }
 
-    // --- THIS IS THE FIX ---
     private void OnCollisionEnter(Collision collision)
     {
         if (isDead) return;
 
         if (collision.gameObject.CompareTag("Damage"))
         {
-            // It now looks for "Projectile.cs"
             Projectile projectileScript = collision.gameObject.GetComponent<Projectile>();
             if (projectileScript != null && projectileScript.firedByPlayer)
             {
@@ -136,10 +134,10 @@ public class EnemyArcher : MonoBehaviour
             }
         }
     }
-    // --- END OF FIX ---
 
     private void Patroling()
     {
+        agent.updateRotation = true; // <-- Agent controls rotation
         if (!walkPointSet) SearchWalkPoint();
 
         if (walkPointSet)
@@ -164,18 +162,21 @@ public class EnemyArcher : MonoBehaviour
     private void ChasePlayer()
     {
         if (player == null) return;
+        agent.updateRotation = true; // <-- Agent controls rotation
         agent.SetDestination(player.position);
     }
 
     private void ChaseCrystal()
     {
         if (crystal == null) return;
+        agent.updateRotation = true; // <-- Agent controls rotation
         agent.SetDestination(crystal.position);
     }
 
     private void AttackPlayer()
     {
         if (alreadyAttacked || player == null) return;
+        agent.updateRotation = false; // <-- FIX: Script controls rotation
         agent.SetDestination(transform.position);
 
         RotateTowards(player.position);
@@ -195,6 +196,7 @@ public class EnemyArcher : MonoBehaviour
     private void AttackCrystal()
     {
         if (alreadyAttacked || crystal == null) return;
+        agent.updateRotation = false; // <-- FIX: Script controls rotation
         agent.SetDestination(transform.position);
 
         RotateTowards(crystal.position);
@@ -211,22 +213,19 @@ public class EnemyArcher : MonoBehaviour
         Invoke(nameof(ResetAttack), timeBetweenAttacks);
     }
 
-    // This function also needs to use Projectile.cs
     private void FireArrow(Vector3 target)
     {
         Vector3 fireDirection = (target - firePoint.position).normalized;
 
         GameObject arrowObj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(fireDirection));
         Rigidbody rb_proj = arrowObj.GetComponent<Rigidbody>();
-
-        // --- THIS IS THE FIX ---
         Projectile projectileScript = arrowObj.GetComponent<Projectile>();
+
         if (projectileScript != null)
         {
-            projectileScript.firedByPlayer = false; // It's an enemy arrow
+            projectileScript.firedByPlayer = false;
             projectileScript.damage = 10f;
         }
-        // --- END OF FIX ---
 
         if (rb_proj != null)
         {
@@ -241,8 +240,13 @@ public class EnemyArcher : MonoBehaviour
     private void RotateTowards(Vector3 targetPos)
     {
         Vector3 direction = (targetPos - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        direction.y = 0;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        }
     }
 
     private void ResetAttack()
