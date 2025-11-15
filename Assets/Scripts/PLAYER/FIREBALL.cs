@@ -8,23 +8,23 @@ public class FireballAbility : MonoBehaviour
     public float fireballCooldown = 3f;
     public float fireballDamage = 50f;
     public float aoeRadius = 3f;
+    public float fireballBurnDuration = 3f; // <-- FIX
 
     [Header("Visuals")]
     public Transform firePoint;
     public GameObject explosionPrefab;
+    public GameObject burningGroundPrefab; // <-- NEW
 
     [Header("State")]
     public bool isUnlocked = true;
 
     private float nextFireTime = 0f;
 
-    // This function name MUST match your Input Action (e.g., "FIREBALL")
     void OnFIREBALL(InputValue value)
     {
         if (!isUnlocked) return;
         if (Time.time < nextFireTime) return;
 
-        // Only run on the press-down frame
         if (!value.isPressed)
         {
             return;
@@ -45,6 +45,8 @@ public class FireballAbility : MonoBehaviour
                 fireball.damage = this.fireballDamage;
                 fireball.explosionRadius = this.aoeRadius;
                 fireball.explosionEffect = this.explosionPrefab;
+                fireball.burningGroundEffect = this.burningGroundPrefab; // <-- NEW
+                fireball.burnDuration = this.fireballBurnDuration; // <-- NEW
             }
         }
     }

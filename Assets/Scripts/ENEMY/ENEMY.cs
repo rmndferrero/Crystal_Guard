@@ -36,7 +36,7 @@ public class EnemyArcher : MonoBehaviour
     // States
     public float sightRange = 25f;
     public float attackRange = 15f;
-    public float playerAggroRange = 12f; // ✅ Player must get this close to distract the archer
+    public float playerAggroRange = 12f;
     private bool playerInSightRange, playerInAttackRange;
 
     // Crystal Target
@@ -67,7 +67,6 @@ public class EnemyArcher : MonoBehaviour
         if (modelRenderer != null)
             originalColor = modelRenderer.material.color;
 
-        // Find Player
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -75,7 +74,6 @@ public class EnemyArcher : MonoBehaviour
                 player = playerObj.transform;
         }
 
-        // Find Crystal
         crystalHealth = FindFirstObjectByType<CrystalHealth>();
         if (crystalHealth != null)
             crystal = crystalHealth.transform;
@@ -88,20 +86,16 @@ public class EnemyArcher : MonoBehaviour
         if (animator != null)
             animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
 
-        // Update state checks
         playerInSightRange = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
         playerInAttackRange = player != null && Physics.CheckSphere(transform.position, attackRange, Player);
 
-        // ✅ Target Priority Logic
         if (crystal != null)
         {
             float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
             float distanceToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : Mathf.Infinity;
 
-            // ✅ Prioritize crystal unless player is dangerously close
             if (distanceToPlayer < playerAggroRange && distanceToPlayer < distanceToCrystal)
             {
-                // Player is close enough — fight back
                 if (playerInAttackRange)
                     AttackPlayer();
                 else
@@ -109,7 +103,6 @@ public class EnemyArcher : MonoBehaviour
             }
             else
             {
-                // Focus crystal
                 if (distanceToCrystal <= attackRange)
                     AttackCrystal();
                 else
@@ -118,7 +111,6 @@ public class EnemyArcher : MonoBehaviour
         }
         else
         {
-            // No crystal found, just chase player or patrol
             if (playerInSightRange && playerInAttackRange)
                 AttackPlayer();
             else if (playerInSightRange)
@@ -128,20 +120,23 @@ public class EnemyArcher : MonoBehaviour
         }
     }
 
+    // --- THIS IS THE FIX ---
     private void OnCollisionEnter(Collision collision)
     {
         if (isDead) return;
 
         if (collision.gameObject.CompareTag("Damage"))
         {
-            Arrow arrow = collision.gameObject.GetComponent<Arrow>();
-            if (arrow != null)
+            // It now looks for "Projectile.cs"
+            Projectile projectileScript = collision.gameObject.GetComponent<Projectile>();
+            if (projectileScript != null && projectileScript.firedByPlayer)
             {
-                TakeDamage((int)arrow.damage);
+                TakeDamage((int)projectileScript.damage);
                 Destroy(collision.gameObject);
             }
         }
     }
+    // --- END OF FIX ---
 
     private void Patroling()
     {
@@ -216,19 +211,22 @@ public class EnemyArcher : MonoBehaviour
         Invoke(nameof(ResetAttack), timeBetweenAttacks);
     }
 
+    // This function also needs to use Projectile.cs
     private void FireArrow(Vector3 target)
     {
         Vector3 fireDirection = (target - firePoint.position).normalized;
 
         GameObject arrowObj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(fireDirection));
         Rigidbody rb_proj = arrowObj.GetComponent<Rigidbody>();
-        Arrow arrowScript = arrowObj.GetComponent<Arrow>();
 
-        if (arrowScript != null)
+        // --- THIS IS THE FIX ---
+        Projectile projectileScript = arrowObj.GetComponent<Projectile>();
+        if (projectileScript != null)
         {
-            arrowScript.ownerTag = "Enemy"; // ✅ ensures damage goes to crystal or player
-            arrowScript.damage = 10f;
+            projectileScript.firedByPlayer = false; // It's an enemy arrow
+            projectileScript.damage = 10f;
         }
+        // --- END OF FIX ---
 
         if (rb_proj != null)
         {
@@ -255,7 +253,6 @@ public class EnemyArcher : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isDead) return;
-
         health -= damage;
 
         if (audioSource != null && hitSFX != null)
@@ -266,7 +263,6 @@ public class EnemyArcher : MonoBehaviour
 
         if (health <= 0)
             Die();
-
     }
 
     private void Die()

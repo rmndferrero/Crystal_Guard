@@ -44,7 +44,6 @@ public class MeleeEnemyAI : MonoBehaviour
     private bool isDead = false;
     private Animator animator;
 
-    // --- Sound Effects ---
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip attackSFX;
@@ -85,7 +84,6 @@ public class MeleeEnemyAI : MonoBehaviour
 
         playerInSightRange = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
 
-        // Choose target priority
         if (playerInSightRange)
             currentTarget = player;
         else if (crystal != null)
@@ -107,6 +105,24 @@ public class MeleeEnemyAI : MonoBehaviour
         }
     }
 
+    // --- THIS IS THE NEW FUNCTION ---
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isDead) return;
+
+        if (collision.gameObject.CompareTag("Damage"))
+        {
+            // It now looks for "Projectile.cs"
+            Projectile projectileScript = collision.gameObject.GetComponent<Projectile>();
+            if (projectileScript != null && projectileScript.firedByPlayer)
+            {
+                TakeDamage((int)projectileScript.damage);
+                Destroy(collision.gameObject);
+            }
+        }
+    }
+    // --- END OF NEW FUNCTION ---
+
     private void ChaseTarget()
     {
         if (currentTarget == null) return;
@@ -121,7 +137,6 @@ public class MeleeEnemyAI : MonoBehaviour
 
         agent.isStopped = true;
 
-        // Smoothly rotate to face target
         Vector3 dir = (currentTarget.position - transform.position).normalized;
         dir.y = 0f;
         if (dir != Vector3.zero)
@@ -130,14 +145,12 @@ public class MeleeEnemyAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 10f);
         }
 
-        // Play animation
         if (animator != null)
             animator.SetTrigger("Attack");
 
         if (audioSource != null && attackSFX != null)
             audioSource.PlayOneShot(attackSFX);
 
-        // Apply damage
         if (currentTarget.CompareTag("Player"))
         {
             PlayerHealth ph = currentTarget.GetComponent<PlayerHealth>();
@@ -162,7 +175,6 @@ public class MeleeEnemyAI : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isDead) return;
-
         health -= damage;
 
         if (audioSource != null && hitSFX != null)

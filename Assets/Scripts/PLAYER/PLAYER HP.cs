@@ -12,15 +12,32 @@ public class PlayerHealth : MonoBehaviour
 
     private WaveManager waveManager;
 
-    void Start()
+    // --- NEW VARIABLES ---
+    private RectTransform sliderRectTransform;
+    private float originalSliderWidth;
+    private float originalMaxHealth;
+    // --- END NEW ---
+
+    void Awake()
     {
         currentHealth = maxHealth;
+    }
+
+    void Start()
+    {
         waveManager = FindFirstObjectByType<WaveManager>();
 
         if (healthSlider != null)
         {
             healthSlider.maxValue = maxHealth;
             healthSlider.value = maxHealth;
+
+            // --- NEW CODE ---
+            // Store the original size info
+            sliderRectTransform = healthSlider.GetComponent<RectTransform>();
+            originalSliderWidth = sliderRectTransform.sizeDelta.x;
+            originalMaxHealth = maxHealth;
+            // --- END NEW ---
         }
     }
 
@@ -55,6 +72,24 @@ public class PlayerHealth : MonoBehaviour
         if (healthSlider != null)
         {
             healthSlider.value = currentHealth;
+        }
+    }
+
+    public void IncreaseMaxHealth(float amount)
+    {
+        maxHealth += amount;
+        currentHealth += amount;
+
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = maxHealth;
+            healthSlider.value = currentHealth;
+
+            // --- NEW CODE ---
+            // Calculate and apply the new width
+            float widthMultiplier = maxHealth / originalMaxHealth;
+            sliderRectTransform.sizeDelta = new Vector2(originalSliderWidth * widthMultiplier, sliderRectTransform.sizeDelta.y);
+            // --- END NEW ---
         }
     }
 

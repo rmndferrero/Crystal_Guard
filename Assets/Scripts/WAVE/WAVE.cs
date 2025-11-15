@@ -102,7 +102,7 @@ public class WaveManager : MonoBehaviour
     {
         if (spawnPoints.Length == 0) return;
         Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        GameObject newEnemy = Instantiate(enemyPrefab, randomSpawnPoint.position, randomSpawnPoint.rotation);
+        Instantiate(enemyPrefab, randomSpawnPoint.position, randomSpawnPoint.rotation);
     }
 
     public void OnEnemyDied()
@@ -115,7 +115,7 @@ public class WaveManager : MonoBehaviour
         {
             HandleWin();
         }
-        else if (enemiesAlive == 0 && currentWaveIndex < waves.Length)
+        else if (enemiesAlive == 0)
         {
             StartCoroutine(WaveCompleteSequence());
         }
@@ -165,6 +165,10 @@ public class WaveManager : MonoBehaviour
         if (gameIsOver) return;
         gameIsOver = true;
         if (winScreen) winScreen.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         Time.timeScale = 0f;
     }
 
@@ -173,6 +177,10 @@ public class WaveManager : MonoBehaviour
         if (gameIsOver) return;
         gameIsOver = true;
         if (loseScreen) loseScreen.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         Time.timeScale = 0f;
     }
 
@@ -182,5 +190,14 @@ public class WaveManager : MonoBehaviour
         {
             waveText.text = text;
         }
+    }
+
+    // -------------------------------------
+    //         RETRY BUTTON FUNCTION
+    // -------------------------------------
+    public void RetryGame()
+    {
+        Time.timeScale = 1f; // unfreeze game
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

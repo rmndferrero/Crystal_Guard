@@ -17,6 +17,8 @@ public class UpgradeManager : MonoBehaviour
 
     [Header("Settings")]
     public float slowMotionTimeScale = 0.1f;
+    [Range(0, 100)]
+    public int rareUpgradeChance = 25;
 
     private PlayerMovement playerMovement;
     private PlayerHealth playerHealth;
@@ -26,6 +28,8 @@ public class UpgradeManager : MonoBehaviour
     private WaveManager waveManager;
 
     private List<string> upgradePool = new List<string>();
+    private List<string> rareUpgradePool = new List<string>();
+
     private bool fireballUnlockedOnce = false;
 
     void Start()
@@ -46,12 +50,19 @@ public class UpgradeManager : MonoBehaviour
     void PopulateUpgradePool()
     {
         upgradePool.Clear();
-        upgradePool.Add("Bow Damage+");
-        upgradePool.Add("Fireball Damage+");
+
+        upgradePool.Add("Bow DMG+");
+        upgradePool.Add("Burn Time+");
         upgradePool.Add("Player HP Regain");
         upgradePool.Add("Crystal HP Regain");
         upgradePool.Add("Move Speed+");
         upgradePool.Add("Dash Cooldown-");
+        upgradePool.Add("Player Max HP+");
+        upgradePool.Add("Crystal Max HP+");
+
+        rareUpgradePool.Clear();
+        rareUpgradePool.Add("Infinite Arrows");
+        rareUpgradePool.Add("Enhance 3rd Shot");
     }
 
     public void ShowUpgradeScreen()
@@ -70,7 +81,7 @@ public class UpgradeManager : MonoBehaviour
 
     IEnumerator ShowFireballUnlockSmooth()
     {
-        PauseGame(false);
+        Time.timeScale = 1f;
         fireballUnlockScreen.SetActive(true);
 
         if (fireballAbility != null)
@@ -79,52 +90,27 @@ public class UpgradeManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(3f);
 
         fireballUnlockScreen.SetActive(false);
-        UnpauseGame();
         waveManager.StartNextWaveCoroutine();
     }
 
     void ShowRandomUpgrades()
     {
-        PauseGame(true);
+        PauseGame();
+
         upgradeScreen.SetActive(true);
 
         List<string> options = GetRandomUpgrades(3);
 
-        // --- THIS IS THE FIX for the "randomization" bug/crash ---
-
-        // First, hide all buttons
-        upgradeButton1.gameObject.SetActive(false);
-        upgradeButton2.gameObject.SetActive(false);
-        upgradeButton3.gameObject.SetActive(false);
-
-        // Only show and set up buttons if we have an upgrade for them
-        if (options.Count >= 1)
-        {
-            SetupButton(upgradeButton1, options[0]);
-            upgradeButton1.gameObject.SetActive(true);
-        }
-        if (options.Count >= 2)
-        {
-            SetupButton(upgradeButton2, options[1]);
-            upgradeButton2.gameObject.SetActive(true);
-        }
-        if (options.Count >= 3)
-        {
-            SetupButton(upgradeButton3, options[2]);
-            upgradeButton3.gameObject.SetActive(true);
-        }
-        // --- END OF FIX ---
+        SetupButton(upgradeButton1, options[0]);
+        SetupButton(upgradeButton2, options[1]);
+        SetupButton(upgradeButton3, options[2]);
     }
 
-    void PauseGame(bool showCursor)
+    void PauseGame()
     {
         Time.timeScale = slowMotionTimeScale;
-
-        if (showCursor)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     void UnpauseGame()
@@ -138,63 +124,88 @@ public class UpgradeManager : MonoBehaviour
     {
         List<string> available = new List<string>(upgradePool);
 
-        if (fireballAbility != null && !fireballAbility.isUnlocked)
-            available.Remove("Fireball Damage+");
+        if (!fireballAbility.isUnlocked)
+            available.Remove("Burn Time+"); 
 
-        List<string> chosen = new List<string>();
+        if (playerHealth.currentHealth >= playerHealth.maxHealth)
+            available.Remove("Player HP Regain");
 
-        for (int i = 0; i < count; i++)
+        if (crystalHealth.currentHealth >= crystalHealth.maxHealth)
+            available.Remove("Crystal HP Regain");
+
+        List<string> selected = new List<string>();
+
+        for (int i = 0; i < count && available.Count > 0; i++)
         {
-            if (available.Count == 0) break;
-
             int idx = Random.Range(0, available.Count);
-            chosen.Add(available[idx]);
+            selected.Add(available[idx]);
             available.RemoveAt(idx);
         }
 
-        return chosen;
+        if (rareUpgradePool.Count > 0 && Random.Range(0, 100) < rareUpgradeChance)
+        {
+            int rareIdx = Random.Range(0, rareUpgradePool.Count);
+            int replaceIdx = Random.Range(0, selected.Count);
+            selected[replaceIdx] = rareUpgradePool[rareIdx];
+        }
+
+        return selected;
     }
 
-    void SetupButton(Button button, string upgradeType)
+    void SetupButton(Button button, string upgradeName)
     {
         button.onClick.RemoveAllListeners();
 
         TextMeshProUGUI tmp = button.GetComponentInChildren<TextMeshProUGUI>();
+        tmp.text = upgradeName.ToUpper();
 
-        // --- THIS IS THE "CAPSLOCK" FIX ---
-        tmp.text = upgradeType.ToUpper();
-        // --- END OF FIX ---
-
-        button.onClick.AddListener(() => ApplyUpgrade(upgradeType));
+        button.onClick.AddListener(() => ApplyUpgrade(upgradeName));
     }
 
-    void ApplyUpgrade(string upgradeType)
+    void ApplyUpgrade(string upgrade)
     {
-        // Note: The switch checks the original (non-capslock) name
-        switch (upgradeType)
+        switch (upgrade)
         {
-            case "Bow Damage+":
+            case "Bow DMG+":
                 bowController.arrowDamage += 5f;
                 break;
 
-            case "Fireball Damage+":
-                fireballAbility.fireballDamage += 10f;
+            case "Burn Time+":
+                fireballAbility.fireballBurnDuration += 1.5f;
                 break;
 
             case "Player HP Regain":
-                playerHealth.Heal(25f);
+                playerHealth.Heal(9999f);
                 break;
 
             case "Crystal HP Regain":
-                crystalHealth.Heal(100f);
+                crystalHealth.Heal(9999f);
                 break;
 
             case "Move Speed+":
-                playerMovement.moveSpeed += 2f;
+                playerMovement.moveSpeed *= 1.25f;   // noticeable movement buff
                 break;
 
             case "Dash Cooldown-":
-                playerMovement.dashCooldown *= 0.8f;
+                playerMovement.dashCooldown *= 0.6f;
+                break;
+
+            case "Player Max HP+":
+                playerHealth.IncreaseMaxHealth(10f);
+                break;
+
+            case "Crystal Max HP+":
+                crystalHealth.IncreaseMaxHealth(25f);
+                break;
+
+            case "Infinite Arrows":
+                bowController.infiniteArrows = true;
+                rareUpgradePool.Remove("Infinite Arrows");
+                break;
+
+            case "Enhance 3rd Shot":
+                bowController.enhancedThirdShot = true;
+                rareUpgradePool.Remove("Enhance 3rd Shot");
                 break;
         }
 

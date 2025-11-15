@@ -7,21 +7,22 @@ public class BowController : MonoBehaviour
     public float fireRate = 0.5f;
     public int quiverSize = 20;
     public float arrowDamage = 10f;
-
     public GameObject arrowPrefab;
+    public GameObject enhancedArrowPrefab;
     public Transform arrowSpawnPoint;
 
     private int currentAmmo;
     private bool isReloading = false;
     private float nextTimeToFire = 0f;
 
+    // --- NEW UPGRADE VARIABLES ---
+    public bool infiniteArrows = false;
+    public bool enhancedThirdShot = false;
+    private int shotCounter = 0;
+    // --- END NEW ---
+
     private Quaternion initialRotation;
     private Vector3 reloadRotationOffset = new Vector3(30, 0, 0);
-
-    [Header("Audio")]
-    public AudioClip shootSound;    // assign this in the inspector
-    public float shootVolume = 1f;  // optional, default 1.0
-
 
     void Start()
     {
@@ -34,44 +35,48 @@ public class BowController : MonoBehaviour
         if (isReloading) return;
         if (Time.time < nextTimeToFire) return;
 
-        if (currentAmmo <= 0)
+        if (currentAmmo <= 0 && !infiniteArrows)
         {
             TryReload();
             return;
         }
 
-        if (shootSound != null)
-        {
-            AudioSource.PlayClipAtPoint(shootSound, arrowSpawnPoint.position, shootVolume);
-        }
-
         nextTimeToFire = Time.time + fireRate;
-        currentAmmo--;
 
-        // ✅ Spawn arrow
-        GameObject arrowObj = Instantiate(arrowPrefab, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
-
-        // ✅ Assign arrow properties safely
-        Arrow arrowScript = arrowObj.GetComponent<Arrow>();
-        if (arrowScript != null)
+        if (!infiniteArrows)
         {
-            arrowScript.damage = this.arrowDamage;
-            arrowScript.ownerTag = "Player"; // <<< The important fix!
+            currentAmmo--;
         }
 
-        // ✅ Optional: add small force if needed
-        Rigidbody rb = arrowObj.GetComponent<Rigidbody>();
-        if (rb != null)
+        shotCounter++;
+
+        // --- NEW ENHANCED SHOT LOGIC ---
+        GameObject prefabToSpawn = arrowPrefab;
+        float damageToDeal = this.arrowDamage;
+
+        if (enhancedThirdShot && shotCounter % 3 == 0)
         {
-            rb.linearVelocity = arrowSpawnPoint.forward * 50f;
+            prefabToSpawn = enhancedArrowPrefab;
+            damageToDeal = 9999f; // One-shot damage
+        }
+        // --- END NEW ---
+
+        GameObject arrowObj = Instantiate(prefabToSpawn, arrowSpawnPoint.position, arrowSpawnPoint.rotation);
+
+        Projectile projectileScript = arrowObj.GetComponent<Projectile>();
+        if (projectileScript != null)
+        {
+            projectileScript.damage = damageToDeal;
+            projectileScript.firedByPlayer = true;
         }
     }
 
     public void TryReload()
     {
-        if (isReloading || currentAmmo == quiverSize)
+        if (isReloading || currentAmmo == quiverSize || infiniteArrows)
+        {
             return;
-
+        }
         StartCoroutine(Reload());
     }
 
@@ -91,6 +96,7 @@ public class BowController : MonoBehaviour
         }
 
         t = 0f;
+
         while (t < halfReload)
         {
             t += Time.deltaTime;
