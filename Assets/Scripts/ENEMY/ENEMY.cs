@@ -6,53 +6,56 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyArcher : MonoBehaviour
 {
+    [Header("Core Components")]
     public NavMeshAgent agent;
     public Transform player;
+    private Animator animator;
+    private Rigidbody rb;
     public LayerMask Ground, Player;
-    public float health = 100;
 
-    // Patroling
+    [Header("Stats")]
+    public float health = 100;
+    public float rotationSpeed = 10f;
+
+    [Header("Patrol Logic")]
     public Vector3 walkPoint;
     bool walkPointSet;
     public float walkPointRange = 10f;
+    public float patrolWaitTime = 2f;
+    private float patrolTimer = 0f;
 
-    // Attacking
+    [Header("Combat Logic")]
     public float timeBetweenAttacks = 2f;
+    public float attackRange = 15f;
+    public float sightRange = 25f;
+    public float playerAggroRange = 12f;
     bool alreadyAttacked;
+
+    [Header("Ranged Attack")]
     public GameObject projectile;
     public Transform firePoint;
     public float projectileSpeed = 32f;
     public float aimHeightOffset = 1.4f;
 
-    // Hit Flash
-    public Renderer modelRenderer;
-    public Color hitColor = Color.red;
-    private Color originalColor;
-    private Coroutine flashCoroutine;
-
-    // Death
-    public GameObject deathPoofPrefab;
-
-    // States
-    public float sightRange = 25f;
-    public float attackRange = 15f;
-    public float playerAggroRange = 12f;
-    private bool playerInSightRange, playerInAttackRange;
-
-    // Crystal Target
+    [Header("Crystal Target")]
     private Transform crystal;
     private CrystalHealth crystalHealth;
 
-    private Rigidbody rb;
-    private bool isDead = false;
-    private Animator animator;
-    public float rotationSpeed = 5f;
-
-    [Header("Audio")]
+    [Header("Visual & Audio")]
+    public Renderer modelRenderer;
+    public Color hitColor = Color.red;
+    public GameObject deathPoofPrefab;
     public AudioSource audioSource;
     public AudioClip attackSFX;
     public AudioClip deathSFX;
     public AudioClip hitSFX;
+
+    // Private State
+    private bool isDead = false;
+    private Color originalColor;
+    private Coroutine flashCoroutine;
+    private bool playerInSightRange, playerInAttackRange;
+
 
     private void Awake()
     {
@@ -61,12 +64,14 @@ public class EnemyArcher : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         audioSource = GetComponent<AudioSource>();
 
-        rb.isKinematic = true;
-        rb.freezeRotation = true;
+        // Auto-find renderer
+        if (modelRenderer == null)
+            modelRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
 
         if (modelRenderer != null)
             originalColor = modelRenderer.material.color;
 
+        // Find the player
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -74,77 +79,92 @@ public class EnemyArcher : MonoBehaviour
                 player = playerObj.transform;
         }
 
+        // Find the crystal
         crystalHealth = FindFirstObjectByType<CrystalHealth>();
         if (crystalHealth != null)
             crystal = crystalHealth.transform;
+
+        rb.isKinematic = true;
+        rb.freezeRotation = true;
     }
 
     private void Update()
     {
         if (isDead || !agent.isOnNavMesh) return;
 
+        // Animator speed fixes walking properly
         if (animator != null)
-            animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
+            animator.SetFloat("Speed", agent.velocity.magnitude);
 
+        // Check player ranges
         playerInSightRange = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
         playerInAttackRange = player != null && Physics.CheckSphere(transform.position, attackRange, Player);
 
-        if (crystal != null)
-        {
-            float distanceToCrystal = Vector3.Distance(transform.position, crystal.position);
-            float distanceToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : Mathf.Infinity;
+        Transform currentTarget = crystal; // Default: crystal
 
-            if (distanceToPlayer < playerAggroRange && distanceToPlayer < distanceToCrystal)
-            {
-                if (playerInAttackRange)
-                    AttackPlayer();
-                else
-                    ChasePlayer();
-            }
-            else
-            {
-                if (distanceToCrystal <= attackRange)
-                    AttackCrystal();
-                else
-                    ChaseCrystal();
-            }
+        // If player steps between archer & crystal OR gets too close → target player
+        if (player != null)
+        {
+            float distPlayer = Vector3.Distance(transform.position, player.position);
+            float distCrystal = crystal ? Vector3.Distance(player.position, crystal.position) : Mathf.Infinity;
+
+            bool playerBlockingView = distPlayer < distCrystal;
+
+            if (playerInSightRange || distPlayer < playerAggroRange || playerBlockingView)
+                currentTarget = player;
+        }
+
+        if (currentTarget == null)
+        {
+            Patroling();
+            return;
+        }
+
+        float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
+
+        if (distanceToTarget <= attackRange)
+        {
+            // Move sideways a bit if the player gets too close
+            if (currentTarget == player && distanceToTarget < 7f)
+                StrafeMovement();
+
+            float heightOffset = currentTarget == player ? aimHeightOffset : 0.5f;
+            AttackTarget(currentTarget, heightOffset);
         }
         else
         {
-            if (playerInSightRange && playerInAttackRange)
-                AttackPlayer();
-            else if (playerInSightRange)
-                ChasePlayer();
-            else
-                Patroling();
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (isDead) return;
-
-        if (collision.gameObject.CompareTag("Damage"))
-        {
-            Projectile projectileScript = collision.gameObject.GetComponent<Projectile>();
-            if (projectileScript != null && projectileScript.firedByPlayer)
-            {
-                TakeDamage((int)projectileScript.damage);
-                Destroy(collision.gameObject);
-            }
+            ChaseTarget(currentTarget);
         }
     }
 
     private void Patroling()
     {
-        agent.updateRotation = true; // <-- Agent controls rotation
+        agent.updateRotation = true;
+
         if (!walkPointSet) SearchWalkPoint();
 
         if (walkPointSet)
-            agent.SetDestination(walkPoint);
+        {
+            float distance = Vector3.Distance(transform.position, walkPoint);
 
-        if (Vector3.Distance(transform.position, walkPoint) < 1f)
-            walkPointSet = false;
+            if (distance < 1f)
+            {
+                agent.isStopped = true;
+                patrolTimer += Time.deltaTime;
+
+                if (patrolTimer >= patrolWaitTime)
+                {
+                    walkPointSet = false;
+                    patrolTimer = 0f;
+                    agent.isStopped = false;
+                }
+            }
+            else
+            {
+                agent.isStopped = false;
+                agent.SetDestination(walkPoint);
+            }
+        }
     }
 
     private void SearchWalkPoint()
@@ -159,55 +179,52 @@ public class EnemyArcher : MonoBehaviour
         }
     }
 
-    private void ChasePlayer()
+    private void ChaseTarget(Transform target)
     {
-        if (player == null) return;
-        agent.updateRotation = true; // <-- Agent controls rotation
-        agent.SetDestination(player.position);
+        if (target == null) return;
+        agent.updateRotation = true;
+        agent.isStopped = false;
+        agent.SetDestination(target.position);
     }
 
-    private void ChaseCrystal()
+    private void StrafeMovement()
     {
-        if (crystal == null) return;
-        agent.updateRotation = true; // <-- Agent controls rotation
-        agent.SetDestination(crystal.position);
+        Vector3 strafeDir = transform.right * (Random.Range(0, 2) == 0 ? 1 : -1);
+        Vector3 movePos = transform.position + strafeDir * 3f;
+
+        if (NavMesh.SamplePosition(movePos, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
     }
 
-    private void AttackPlayer()
+    private void AttackTarget(Transform target, float heightOffset)
     {
-        if (alreadyAttacked || player == null) return;
-        agent.updateRotation = false; // <-- FIX: Script controls rotation
-        agent.SetDestination(transform.position);
+        if (target == null) return;
 
-        RotateTowards(player.position);
+        agent.isStopped = true;
+        agent.updateRotation = false;
 
-        if (animator != null) animator.SetTrigger("Attack");
+        Vector3 dir = (target.position - transform.position).normalized;
+        dir.y = 0;
 
-        if (audioSource != null && attackSFX != null)
+        if (dir == Vector3.zero) return;
+
+        Quaternion lookRot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
+
+        if (alreadyAttacked) return;
+
+        transform.rotation = lookRot;
+
+        if (animator != null)
+            animator.SetTrigger("Attack");
+
+        if (audioSource && attackSFX)
             audioSource.PlayOneShot(attackSFX);
 
-        Vector3 targetPosition = player.position + Vector3.up * aimHeightOffset;
-        FireArrow(targetPosition);
-
-        alreadyAttacked = true;
-        Invoke(nameof(ResetAttack), timeBetweenAttacks);
-    }
-
-    private void AttackCrystal()
-    {
-        if (alreadyAttacked || crystal == null) return;
-        agent.updateRotation = false; // <-- FIX: Script controls rotation
-        agent.SetDestination(transform.position);
-
-        RotateTowards(crystal.position);
-
-        if (animator != null) animator.SetTrigger("Attack");
-
-        if (audioSource != null && attackSFX != null)
-            audioSource.PlayOneShot(attackSFX);
-
-        Vector3 targetPosition = crystal.position + Vector3.up * 0.5f;
-        FireArrow(targetPosition);
+        Vector3 targetPos = target.position + Vector3.up * heightOffset;
+        FireArrow(targetPos);
 
         alreadyAttacked = true;
         Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -215,38 +232,21 @@ public class EnemyArcher : MonoBehaviour
 
     private void FireArrow(Vector3 target)
     {
+        if (firePoint == null || projectile == null) return;
+
         Vector3 fireDirection = (target - firePoint.position).normalized;
-
         GameObject arrowObj = Instantiate(projectile, firePoint.position, Quaternion.LookRotation(fireDirection));
-        Rigidbody rb_proj = arrowObj.GetComponent<Rigidbody>();
-        Projectile projectileScript = arrowObj.GetComponent<Projectile>();
 
+        Projectile projectileScript = arrowObj.GetComponent<Projectile>();
         if (projectileScript != null)
         {
             projectileScript.firedByPlayer = false;
             projectileScript.damage = 10f;
         }
 
+        Rigidbody rb_proj = arrowObj.GetComponent<Rigidbody>();
         if (rb_proj != null)
-        {
-#if UNITY_6000_0_OR_NEWER
             rb_proj.linearVelocity = fireDirection * projectileSpeed;
-#else
-            rb_proj.velocity = fireDirection * projectileSpeed;
-#endif
-        }
-    }
-
-    private void RotateTowards(Vector3 targetPos)
-    {
-        Vector3 direction = (targetPos - transform.position).normalized;
-        direction.y = 0;
-
-        if (direction != Vector3.zero)
-        {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
-        }
     }
 
     private void ResetAttack()
@@ -259,7 +259,7 @@ public class EnemyArcher : MonoBehaviour
         if (isDead) return;
         health -= damage;
 
-        if (audioSource != null && hitSFX != null)
+        if (audioSource && hitSFX)
             audioSource.PlayOneShot(hitSFX);
 
         if (flashCoroutine != null) StopCoroutine(flashCoroutine);
@@ -272,30 +272,29 @@ public class EnemyArcher : MonoBehaviour
     private void Die()
     {
         isDead = true;
+        agent.isStopped = true;
+        agent.enabled = false;
 
-        if (deathPoofPrefab != null)
+        if (deathPoofPrefab)
             Instantiate(deathPoofPrefab, transform.position, Quaternion.identity);
 
         WaveManager waveManager = FindFirstObjectByType<WaveManager>();
         if (waveManager != null)
             waveManager.OnEnemyDied();
 
-        if (deathSFX != null)
-        {
+        if (deathSFX)
             AudioSource.PlayClipAtPoint(deathSFX, transform.position);
-        }
 
         Destroy(gameObject);
     }
 
     IEnumerator HitFlash()
     {
-        if (modelRenderer != null)
-        {
-            modelRenderer.material.color = hitColor;
-            yield return new WaitForSeconds(0.15f);
-            modelRenderer.material.color = originalColor;
-        }
+        if (modelRenderer == null) yield break;
+
+        modelRenderer.material.color = hitColor;
+        yield return new WaitForSeconds(0.15f);
+        modelRenderer.material.color = originalColor;
     }
 
     private void OnDrawGizmosSelected()

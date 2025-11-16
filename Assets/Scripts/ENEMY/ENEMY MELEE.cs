@@ -6,45 +6,48 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class MeleeEnemyAI : MonoBehaviour
 {
+    [Header("Core Components")]
     public NavMeshAgent agent;
     public Transform player;
+    private Animator animator;
+    private Rigidbody rb;
     public LayerMask Ground, Player;
+
+    [Header("Stats")]
     public float health = 100;
+    public int attackDamage = 15;
+    public float rotationSpeed = 20f;
+
+    [Header("Behavior")]
+    public float sightRange = 10f;
+    public float attackRange = 2f;
+    public float timeBetweenAttacks = 1f;
+
+    [Header("Attack Sync")]
+    [Tooltip("Delay before attack damage happens.")]
+    public float attackDamageDelay = 0.5f;
+
+    bool alreadyAttacked;
+    private Transform currentTarget;
 
     // Patroling
     public Vector3 walkPoint;
     bool walkPointSet;
-    public float walkPointRange;
+    public float walkPointRange = 10f;
 
-    // Attacking
-    public float timeBetweenAttacks = 1f;
-    public int attackDamage = 15;
-    public float attackRange = 2f;
-    bool alreadyAttacked;
-    private Transform currentTarget;
-
-    // Hit Flash
-    public Renderer modelRenderer;
-    public Color hitColor = Color.red;
-    private Color originalColor;
-    private Coroutine flashCoroutine;
-
-    // Death
-    public GameObject deathPoofPrefab;
-
-    // States
-    public float sightRange = 10f;
-    public bool playerInSightRange;
-
-    // Crystal Target
+    // Crystal
     private Transform crystal;
     private CrystalHealth crystalHealth;
-
-    private Rigidbody rb;
     private bool isDead = false;
-    private Animator animator;
 
-    [Header("Audio")]
+    // Visuals
+    public Renderer modelRenderer;
+    public Color hitColor = Color.red;
+    private Coroutine flashCoroutine;
+    private Color originalColor;
+    public GameObject deathPoofPrefab;
+
+    // Audio
     public AudioSource audioSource;
     public AudioClip attackSFX;
     public AudioClip deathSFX;
@@ -65,9 +68,8 @@ public class MeleeEnemyAI : MonoBehaviour
 
         if (player == null)
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-                player = playerObj.transform;
+            GameObject obj = GameObject.FindGameObjectWithTag("Player");
+            if (obj != null) player = obj.transform;
         }
 
         crystalHealth = FindFirstObjectByType<CrystalHealth>();
@@ -79,115 +81,140 @@ public class MeleeEnemyAI : MonoBehaviour
     {
         if (isDead || !agent.isOnNavMesh) return;
 
-        if (animator != null)
-            animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
+        // --- NEW ANIMATION SPEED UPDATE ---
+        animator.SetFloat("Speed", agent.velocity.magnitude);
 
-        playerInSightRange = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
+        // Target selection
+        bool playerInSight = player != null && Physics.CheckSphere(transform.position, sightRange, Player);
 
-        if (playerInSightRange)
+        if (playerInSight)
             currentTarget = player;
         else if (crystal != null)
             currentTarget = crystal;
         else
             currentTarget = null;
 
-        if (currentTarget == null) return;
-
-        float distance = Vector3.Distance(transform.position, currentTarget.position);
-
-        if (distance > attackRange)
+        if (currentTarget == null)
         {
-            ChaseTarget();
+            Patroling();
         }
         else
         {
-            AttackTarget();
+            float dist = Vector3.Distance(transform.position, currentTarget.position);
+
+            if (dist > agent.stoppingDistance)
+                ChaseTarget();
+            else
+                AttackTarget();
         }
-
-        Debug.Log("Agent Vel = " + agent.velocity.magnitude +
-          " | Speed Param = " + (agent.velocity.magnitude / agent.speed) +
-          " | IsStopped = " + agent.isStopped);
-
-        Debug.Log("AnimatorSpeed = " + animator.GetFloat("Speed"));
-
     }
 
-    // --- THIS IS THE NEW FUNCTION ---
-    private void OnCollisionEnter(Collision collision)
+    private void Patroling()
     {
-        if (isDead) return;
+        agent.isStopped = false;
+        agent.updateRotation = true;
 
-        if (collision.gameObject.CompareTag("Damage"))
+        if (!walkPointSet)
+            SearchWalkPoint();
+
+        if (walkPointSet)
+            agent.SetDestination(walkPoint);
+
+        if (Vector3.Distance(transform.position, walkPoint) < 1f)
+            walkPointSet = false;
+    }
+
+    private void SearchWalkPoint()
+    {
+        Vector3 random = Random.insideUnitSphere * walkPointRange;
+        random += transform.position;
+
+        if (NavMesh.SamplePosition(random, out NavMeshHit hit, walkPointRange, NavMesh.AllAreas))
         {
-            // It now looks for "Projectile.cs"
-            Projectile projectileScript = collision.gameObject.GetComponent<Projectile>();
-            if (projectileScript != null && projectileScript.firedByPlayer)
-            {
-                TakeDamage((int)projectileScript.damage);
-                Destroy(collision.gameObject);
-            }
+            walkPoint = hit.position;
+            walkPointSet = true;
         }
     }
-    // --- END OF NEW FUNCTION ---
 
     private void ChaseTarget()
     {
         if (currentTarget == null) return;
 
         agent.isStopped = false;
+        agent.updateRotation = true;
         agent.SetDestination(currentTarget.position);
     }
 
     private void AttackTarget()
     {
-        if (alreadyAttacked || currentTarget == null) return;
-
         agent.isStopped = true;
 
+        if (currentTarget == null) return;
+
+        // Rotate toward target
         Vector3 dir = (currentTarget.position - transform.position).normalized;
-        dir.y = 0f;
+        dir.y = 0;
+
         if (dir != Vector3.zero)
         {
-            Quaternion lookRot = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 10f);
+            Quaternion rot = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rot, Time.deltaTime * rotationSpeed);
         }
 
-        if (animator != null)
-            animator.SetTrigger("Attack");
+        if (alreadyAttacked) return;
 
-        if (audioSource != null && attackSFX != null)
-            audioSource.PlayOneShot(attackSFX);
+        // Trigger attack animation
+        animator.SetTrigger("Attack");
 
-        if (currentTarget.CompareTag("Player"))
-        {
-            PlayerHealth ph = currentTarget.GetComponent<PlayerHealth>();
-            if (ph != null) ph.TakeDamage(attackDamage);
-        }
-        else if (currentTarget.CompareTag("Crystal"))
-        {
-            if (crystalHealth != null)
-                crystalHealth.TakeDamage(attackDamage);
-        }
+        StartCoroutine(DelayedAttack());
 
         alreadyAttacked = true;
         Invoke(nameof(ResetAttack), timeBetweenAttacks);
     }
 
+    IEnumerator DelayedAttack()
+    {
+        yield return new WaitForSeconds(attackDamageDelay);
+
+        if (audioSource != null && attackSFX != null)
+            audioSource.PlayOneShot(attackSFX);
+
+        if (currentTarget == null) yield break;
+
+        float dist = Vector3.Distance(transform.position, currentTarget.position);
+
+        if (dist <= attackRange)
+        {
+            if (currentTarget.CompareTag("Player"))
+            {
+                PlayerHealth ph = currentTarget.GetComponent<PlayerHealth>();
+                if (ph != null) ph.TakeDamage(attackDamage);
+            }
+            else if (currentTarget.CompareTag("Crystal"))
+            {
+                if (crystalHealth != null)
+                    crystalHealth.TakeDamage(attackDamage);
+            }
+        }
+    }
+
     private void ResetAttack()
     {
         alreadyAttacked = false;
-        agent.isStopped = false;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int dmg)
     {
         if (isDead) return;
-        health -= damage;
+
+        health -= dmg;
 
         if (audioSource != null && hitSFX != null)
             audioSource.PlayOneShot(hitSFX);
 
-        if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+
         flashCoroutine = StartCoroutine(HitFlash());
 
         if (health <= 0) Die();
@@ -196,28 +223,25 @@ public class MeleeEnemyAI : MonoBehaviour
     private void Die()
     {
         isDead = true;
+        agent.isStopped = true;
+        agent.enabled = false;
 
         if (deathPoofPrefab != null)
             Instantiate(deathPoofPrefab, transform.position, Quaternion.identity);
 
-        WaveManager waveManager = FindFirstObjectByType<WaveManager>();
-        if (waveManager != null) waveManager.OnEnemyDied();
+        WaveManager wm = FindFirstObjectByType<WaveManager>();
+        if (wm != null) wm.OnEnemyDied();
 
-        if (deathSFX != null)
-        {
+        if (audioSource != null && deathSFX != null)
             AudioSource.PlayClipAtPoint(deathSFX, transform.position);
-        }
 
         Destroy(gameObject);
     }
 
     IEnumerator HitFlash()
     {
-        if (modelRenderer != null)
-        {
-            modelRenderer.material.color = hitColor;
-            yield return new WaitForSeconds(0.15f);
-            modelRenderer.material.color = originalColor;
-        }
+        modelRenderer.material.color = hitColor;
+        yield return new WaitForSeconds(0.15f);
+        modelRenderer.material.color = originalColor;
     }
 }
