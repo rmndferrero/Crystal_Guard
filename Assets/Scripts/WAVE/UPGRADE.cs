@@ -56,7 +56,7 @@ public class UpgradeManager : MonoBehaviour
         upgradePool.Add("Player HP Regain");
         upgradePool.Add("Crystal HP Regain");
         upgradePool.Add("Move Speed+");
-        upgradePool.Add("Dash Cooldown-");
+        upgradePool.Add("Dash CD-");
         upgradePool.Add("Player Max HP+");
         upgradePool.Add("Crystal Max HP+");
 
@@ -186,7 +186,7 @@ public class UpgradeManager : MonoBehaviour
                 playerMovement.moveSpeed *= 1.25f;   // noticeable movement buff
                 break;
 
-            case "Dash Cooldown-":
+            case "Dash CD-":
                 playerMovement.dashCooldown *= 0.6f;
                 break;
 

@@ -3,7 +3,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
-public class CardHoverEffects : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
+public class CardHoverEffects : MonoBehaviour,
+    IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
 {
     [Header("Hover Settings")]
     public float hoverScale = 1.1f;
@@ -15,11 +16,9 @@ public class CardHoverEffects : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public float highlightAlpha = 1f;
     public float normalAlpha = 0.7f;
 
-    // --- NEW ---
     [Header("Sound")]
     public AudioClip hoverSound;
     private AudioSource audioSource;
-    // --- END NEW ---
 
     private RectTransform rect;
     private Vector3 originalScale;
@@ -38,51 +37,34 @@ public class CardHoverEffects : MonoBehaviour, IPointerEnterHandler, IPointerExi
             frame.color = c;
         }
 
-        // --- ADD THIS ---
-        // Get the AudioSource component (the "speaker")
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0; // Make it a 2D sound
-        // --- END ADD ---
+        audioSource.spatialBlend = 0;
+        audioSource.ignoreListenerPause = true;
     }
 
     void Update()
     {
-        // --- ADD THIS ---
-        // This forces the sound to play at normal speed
-        // even when the game is in slow-motion (Time.timeScale is low)
-        if (audioSource.isPlaying)
-        {
-            audioSource.pitch = 1f / Time.timeScale;
-        }
-        else
-        {
-            audioSource.pitch = 1f;
-        }
-        // --- END ADD ---
-
-
         if (!hovered)
         {
+            // Return to normal scale & rotation
             rect.localScale = Vector3.Lerp(rect.localScale, originalScale, Time.unscaledDeltaTime * lerpSpeed);
             rect.rotation = Quaternion.Lerp(rect.rotation, Quaternion.identity, Time.unscaledDeltaTime * lerpSpeed);
             return;
         }
 
+        // Hover scale animation
         rect.localScale = Vector3.Lerp(rect.localScale, originalScale * hoverScale, Time.unscaledDeltaTime * lerpSpeed);
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rect,
-            pointerPos,
-            null,
-            out Vector2 localPoint
-        );
+        // Convert pointer to local UI coordinates
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, pointerPos, null, out Vector2 localPoint))
+        {
+            float xTilt = (localPoint.y / rect.sizeDelta.y) * tiltAmount;
+            float yTilt = -(localPoint.x / rect.sizeDelta.x) * tiltAmount;
 
-        float xTilt = (localPoint.y / rect.sizeDelta.y) * tiltAmount;
-        float yTilt = -(localPoint.x / rect.sizeDelta.x) * tiltAmount;
-
-        Quaternion targetRot = Quaternion.Euler(xTilt, yTilt, 0);
-        rect.rotation = Quaternion.Lerp(rect.rotation, targetRot, Time.unscaledDeltaTime * lerpSpeed);
+            Quaternion targetRot = Quaternion.Euler(xTilt, yTilt, 0);
+            rect.rotation = Quaternion.Lerp(rect.rotation, targetRot, Time.unscaledDeltaTime * lerpSpeed);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -97,13 +79,11 @@ public class CardHoverEffects : MonoBehaviour, IPointerEnterHandler, IPointerExi
             frame.color = c;
         }
 
-        // --- ADD THIS ---
-        // Play the sound
-        if (hoverSound != null && audioSource != null)
+        if (hoverSound != null)
         {
+            audioSource.pitch = 1f;
             audioSource.PlayOneShot(hoverSound);
         }
-        // --- END ADD ---
     }
 
     public void OnPointerExit(PointerEventData eventData)
