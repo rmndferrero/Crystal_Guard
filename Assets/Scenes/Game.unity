@@ -5788,7 +5788,7 @@ MonoBehaviour:
   blackFade: {fileID: 1254166060}
   controlsPanel: {fileID: 1325406561}
   survivePanel: {fileID: 1130724409}
-  survivePanelSound: {fileID: 0}
+  survivePanelSound: {fileID: 8300000, guid: 80e18a262f137e844b835875544f47d5, type: 3}
 --- !u!114 &1573275202
 MonoBehaviour:
   m_ObjectHideFlags: 0
