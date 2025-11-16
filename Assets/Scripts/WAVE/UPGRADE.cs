@@ -50,7 +50,6 @@ public class UpgradeManager : MonoBehaviour
     void PopulateUpgradePool()
     {
         upgradePool.Clear();
-
         upgradePool.Add("Bow DMG+");
         upgradePool.Add("Burn Time+");
         upgradePool.Add("Player HP Regain");
@@ -67,7 +66,9 @@ public class UpgradeManager : MonoBehaviour
 
     public void ShowUpgradeScreen()
     {
-        int waveIndex = waveManager.GetCurrentWaveIndex();
+        if (waveManager == null) return;
+
+        int waveIndex = waveManager.GetCurrentWaveIndex(); // Fixed getter
 
         if (!fireballUnlockedOnce && (waveIndex == 0 || waveIndex == 1))
         {
@@ -90,7 +91,9 @@ public class UpgradeManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(3f);
 
         fireballUnlockScreen.SetActive(false);
-        waveManager.StartNextWaveCoroutine();
+
+        if (waveManager != null)
+            waveManager.StartNextWaveCoroutine();
     }
 
     void ShowRandomUpgrades()
@@ -125,7 +128,7 @@ public class UpgradeManager : MonoBehaviour
         List<string> available = new List<string>(upgradePool);
 
         if (!fireballAbility.isUnlocked)
-            available.Remove("Burn Time+"); 
+            available.Remove("Burn Time+");
 
         if (playerHealth.currentHealth >= playerHealth.maxHealth)
             available.Remove("Player HP Regain");
@@ -166,47 +169,16 @@ public class UpgradeManager : MonoBehaviour
     {
         switch (upgrade)
         {
-            case "Bow DMG+":
-                bowController.arrowDamage += 5f;
-                break;
-
-            case "Burn Time+":
-                fireballAbility.fireballBurnDuration += 1.5f;
-                break;
-
-            case "Player HP Regain":
-                playerHealth.Heal(9999f);
-                break;
-
-            case "Crystal HP Regain":
-                crystalHealth.Heal(9999f);
-                break;
-
-            case "Move Speed+":
-                playerMovement.moveSpeed *= 1.25f;   // noticeable movement buff
-                break;
-
-            case "Dash CD-":
-                playerMovement.dashCooldown *= 0.6f;
-                break;
-
-            case "Player Max HP+":
-                playerHealth.IncreaseMaxHealth(10f);
-                break;
-
-            case "Crystal Max HP+":
-                crystalHealth.IncreaseMaxHealth(25f);
-                break;
-
-            case "Infinite Arrows":
-                bowController.infiniteArrows = true;
-                rareUpgradePool.Remove("Infinite Arrows");
-                break;
-
-            case "Enhance 3rd Shot":
-                bowController.enhancedThirdShot = true;
-                rareUpgradePool.Remove("Enhance 3rd Shot");
-                break;
+            case "Bow DMG+": bowController.arrowDamage += 5f; break;
+            case "Burn Time+": fireballAbility.fireballBurnDuration += 1.5f; break;
+            case "Player HP Regain": playerHealth.Heal(9999f); break;
+            case "Crystal HP Regain": crystalHealth.Heal(9999f); break;
+            case "Move Speed+": playerMovement.moveSpeed *= 1.25f; break;
+            case "Dash CD-": playerMovement.dashCooldown *= 0.6f; break;
+            case "Player Max HP+": playerHealth.IncreaseMaxHealth(10f); break;
+            case "Crystal Max HP+": crystalHealth.IncreaseMaxHealth(25f); break;
+            case "Infinite Arrows": bowController.infiniteArrows = true; rareUpgradePool.Remove("Infinite Arrows"); break;
+            case "Enhance 3rd Shot": bowController.enhancedThirdShot = true; rareUpgradePool.Remove("Enhance 3rd Shot"); break;
         }
 
         HideUpgradeScreen();
@@ -216,6 +188,8 @@ public class UpgradeManager : MonoBehaviour
     {
         upgradeScreen.SetActive(false);
         UnpauseGame();
-        waveManager.StartNextWaveCoroutine();
+
+        if (waveManager != null)
+            waveManager.StartNextWaveCoroutine();
     }
 }

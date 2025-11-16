@@ -1158,94 +1158,6 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   fireballSound: {fileID: 8300000, guid: 21dc0d56da3a7a9428277cca4865b021, type: 3}
   isUnlocked: 0
---- !u!1 &404602801
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 404602802}
-  - component: {fileID: 404602805}
-  - component: {fileID: 404602804}
-  - component: {fileID: 404602803}
-  m_Layer: 5
-  m_Name: START SCREEN
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &404602802
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 404602801}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1420245638}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &404602803
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 404602801}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!114 &404602804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 404602801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.047169805, g: 0.047169805, b: 0.047169805, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &404602805
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 404602801}
-  m_CullTransparentMesh: 1
 --- !u!1 &420111978 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8367627643603176864, guid: 91782945e7d93454b940682579fce68e, type: 3}
@@ -1794,13 +1706,14 @@ GameObject:
   - component: {fileID: 553740770}
   - component: {fileID: 553740772}
   - component: {fileID: 553740771}
+  - component: {fileID: 553740773}
   m_Layer: 5
   m_Name: Lose Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &553740770
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1861,6 +1774,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 553740769}
   m_CullTransparentMesh: 1
+--- !u!225 &553740773
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553740769}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &594836846
 GameObject:
   m_ObjectHideFlags: 0
@@ -4185,6 +4110,7 @@ GameObject:
   - component: {fileID: 1037603298}
   - component: {fileID: 1037603300}
   - component: {fileID: 1037603299}
+  - component: {fileID: 1037603301}
   m_Layer: 5
   m_Name: VICTORY
   m_TagString: Untagged
@@ -4252,6 +4178,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037603297}
   m_CullTransparentMesh: 1
+--- !u!225 &1037603301
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1037603297}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1041879285
 GameObject:
   m_ObjectHideFlags: 0
@@ -4344,7 +4282,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1109645082
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4491,8 +4429,8 @@ CanvasGroup:
   m_GameObject: {fileID: 1130724408}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &1130724410
 MonoBehaviour:
@@ -4905,8 +4843,8 @@ CanvasGroup:
   m_GameObject: {fileID: 1254166058}
   m_Enabled: 1
   m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &1254166061
 MonoBehaviour:
@@ -5586,7 +5524,6 @@ RectTransform:
   - {fileID: 1130724412}
   - {fileID: 1109645082}
   - {fileID: 1325406560}
-  - {fileID: 404602802}
   - {fileID: 1254166059}
   - {fileID: 906259054}
   - {fileID: 1037603298}
@@ -5846,14 +5783,12 @@ MonoBehaviour:
   winScreen: {fileID: 1037603297}
   loseScreen: {fileID: 553740769}
   waveCompleteScreen: {fileID: 1658733360}
-  surviveAllWavesScreen: {fileID: 1130724408}
-  waveCompleteDisplayTime: 2.5
   waveCompleteSound: {fileID: 8300000, guid: 80e18a262f137e844b835875544f47d5, type: 3}
-  startGameSound: {fileID: 0}
-  surviveAllWavesSound: {fileID: 8300000, guid: 80e18a262f137e844b835875544f47d5, type: 3}
-  startScreenPanel: {fileID: 1325406559}
-  startScreenCanvas: {fileID: 404602803}
-  blackFadeCanvas: {fileID: 1254166060}
+  waveCompleteDisplayTime: 2.5
+  blackFade: {fileID: 1254166060}
+  controlsPanel: {fileID: 1325406561}
+  survivePanel: {fileID: 1130724409}
+  survivePanelSound: {fileID: 0}
 --- !u!114 &1573275202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5872,7 +5807,7 @@ MonoBehaviour:
   upgradeButton2: {fileID: 314744763}
   upgradeButton3: {fileID: 663799357}
   slowMotionTimeScale: 0.1
-  rareUpgradeChance: 48
+  rareUpgradeChance: 41
 --- !u!82 &1573275203
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6484,14 +6419,13 @@ GameObject:
   - component: {fileID: 1658733361}
   - component: {fileID: 1658733363}
   - component: {fileID: 1658733362}
-  - component: {fileID: 1658733364}
   m_Layer: 5
   m_Name: WAVE COMPLETE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1658733361
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6552,18 +6486,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1658733360}
   m_CullTransparentMesh: 1
---- !u!225 &1658733364
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658733360}
-  m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!4 &1684175789 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5525761765840793233, guid: 8cd41ef730377db49b09f641f1176124, type: 3}

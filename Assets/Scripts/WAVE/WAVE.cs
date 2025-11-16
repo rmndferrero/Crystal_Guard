@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
 public class WaveManager : MonoBehaviour
@@ -36,28 +36,29 @@ public class WaveManager : MonoBehaviour
 
     [Header("UI & SFX")]
     public TextMeshProUGUI waveText;
-    public GameObject winScreen; // no CanvasGroup here
-    public GameObject loseScreen; // no CanvasGroup here
+    public GameObject winScreen;
+    public GameObject loseScreen;
     public GameObject waveCompleteScreen;
-    public GameObject surviveAllWavesScreen;
-    public float waveCompleteDisplayTime = 2.5f;
     public AudioClip waveCompleteSound;
-    public AudioClip startGameSound;
-    public AudioClip surviveAllWavesSound;
+    public float waveCompleteDisplayTime = 2.5f;
 
-    [Header("Start Game Screen")]
-    public GameObject startScreenPanel;
-    public CanvasGroup startScreenCanvas;
-    public CanvasGroup blackFadeCanvas;
+    [Header("Start Sequence UI")]
+    public CanvasGroup blackFade;
+    public CanvasGroup controlsPanel;
+    public CanvasGroup survivePanel;
+    public AudioClip survivePanelSound; // Sound for survive panel
+
+    private bool waitingForStartClick = true;
+    private bool startSequenceStarted = false;
+    private bool controlsPanelShownOnce = false; // Prevent showing controls panel again
 
     private int currentWaveIndex = 0;
     private int enemiesAlive = 0;
     private bool gameIsOver = false;
-    private bool gameStarted = false;
-
-    public bool GameStarted => gameStarted;
+    public bool GameStarted { get; private set; } = false;
 
     private readonly List<MonoBehaviour> disabledAttackScripts = new();
+    private const string SCENE_NAME = "Game"; // Change to your scene name
 
     void Start()
     {
@@ -67,66 +68,104 @@ public class WaveManager : MonoBehaviour
         if (player == null)
             player = Object.FindFirstObjectByType<PlayerHealth>();
 
-        DisableMainUI();
+        winScreen?.SetActive(false);
+        loseScreen?.SetActive(false);
+        waveCompleteScreen?.SetActive(false);
 
-        Time.timeScale = 0f;
-        StartCoroutine(StartFadeInSequence());
+        Time.timeScale = 1f;
+
+        DisableCombatScripts();
+
+        // Initial UI setup
+        blackFade.alpha = 1f;
+        controlsPanel.alpha = 0f;
+        controlsPanel.gameObject.SetActive(false);
+        survivePanel.alpha = 0f;
+        survivePanel.gameObject.SetActive(false);
+
+        if (!controlsPanelShownOnce)
+        {
+            StartCoroutine(InitialFadeSequence());
+            controlsPanelShownOnce = true;
+        }
     }
 
-    void DisableMainUI()
+    IEnumerator InitialFadeSequence()
     {
-        if (winScreen) winScreen.SetActive(false);
-        if (loseScreen) loseScreen.SetActive(false);
-        if (waveCompleteScreen) waveCompleteScreen.SetActive(false);
-        if (surviveAllWavesScreen) surviveAllWavesScreen.SetActive(false);
+        // Fade black to transparent
+        yield return FadeCanvas(blackFade, 1f, 0f, 1f);
+
+        // Show controls panel only once
+        controlsPanel.gameObject.SetActive(true);
+        yield return FadeCanvas(controlsPanel, 0f, 1f, 0.7f);
     }
 
     void Update()
     {
-        if (!gameStarted)
+        if (gameIsOver) return;
+
+        // Wait for left click while controls panel is shown
+        if (waitingForStartClick && controlsPanel.alpha >= 0.99f)
         {
             if (Input.GetMouseButtonDown(0))
-                StartCoroutine(BeginGameAfterClick());
+            {
+                waitingForStartClick = false;
+                StartCoroutine(StartGameSequence());
+            }
             return;
         }
-
-        if (gameIsOver) return;
 
         if (crystal == null || player == null)
             HandleLose();
     }
 
-    IEnumerator StartFadeInSequence()
+    IEnumerator StartGameSequence()
     {
-        if (blackFadeCanvas)
-            yield return StartCoroutine(FadeCanvas(blackFadeCanvas, 1f, 0f, 1.5f));
-    }
+        if (startSequenceStarted) yield break;
+        startSequenceStarted = true;
 
-    IEnumerator BeginGameAfterClick()
-    {
-        if (startGameSound) audioSource.PlayOneShot(startGameSound);
-        gameStarted = true;
+        // Fade out controls panel
+        if (controlsPanel.gameObject.activeInHierarchy)
+        {
+            yield return FadeCanvas(controlsPanel, 1f, 0f, 0.6f);
+            controlsPanel.gameObject.SetActive(false);
+        }
 
-        yield return StartCoroutine(FadeCanvas(startScreenCanvas, 1f, 0f, 1f));
-        startScreenPanel.SetActive(false);
+        // Show "Survive All Waves"
+        survivePanel.gameObject.SetActive(true);
 
-        Time.timeScale = 1f;
-        yield return StartCoroutine(ShowSurviveAllWaves());
+        // Play survive panel sound
+        if (survivePanelSound != null)
+            audioSource.PlayOneShot(survivePanelSound);
+
+        // Allow movement while survive panel is visible
+        EnableCombatScripts();
+
+        yield return FadeCanvas(survivePanel, 0f, 1f, 0.6f);
+        yield return new WaitForSeconds(1.3f);
+        yield return FadeCanvas(survivePanel, 1f, 0f, 0.6f);
+        survivePanel.gameObject.SetActive(false);
+
+        GameStarted = true;
         StartCoroutine(SpawnNextWave());
     }
 
-    IEnumerator ShowSurviveAllWaves()
+    IEnumerator FadeCanvas(CanvasGroup cg, float from, float to, float time)
     {
-        if (surviveAllWavesSound) audioSource.PlayOneShot(surviveAllWavesSound);
-
-        if (surviveAllWavesScreen)
-            yield return StartCoroutine(FadeCanvasGroupPopup(surviveAllWavesScreen));
+        float t = 0f;
+        cg.alpha = from;
+        while (t < time)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(from, to, t / time);
+            yield return null;
+        }
+        cg.alpha = to;
     }
 
     IEnumerator SpawnNextWave()
     {
-        if (currentWaveIndex >= waves.Length)
-            yield break;
+        if (currentWaveIndex >= waves.Length) yield break;
 
         Wave wave = waves[currentWaveIndex];
         UpdateWaveUI(wave.name);
@@ -134,6 +173,12 @@ public class WaveManager : MonoBehaviour
         enemiesAlive = 0;
         foreach (EnemyGroup group in wave.enemyGroups)
             enemiesAlive += group.count;
+
+        if (enemiesAlive <= 0)
+        {
+            OnEnemyDied();
+            yield break;
+        }
 
         foreach (EnemyGroup group in wave.enemyGroups)
         {
@@ -149,8 +194,7 @@ public class WaveManager : MonoBehaviour
 
     void SpawnEnemy(GameObject enemyPrefab)
     {
-        if (spawnPoints == null || spawnPoints.Length == 0 || enemyPrefab == null)
-            return;
+        if (spawnPoints == null || spawnPoints.Length == 0 || enemyPrefab == null) return;
 
         Transform spawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
         Instantiate(enemyPrefab, spawn.position, spawn.rotation);
@@ -159,6 +203,7 @@ public class WaveManager : MonoBehaviour
     public void OnEnemyDied()
     {
         if (gameIsOver) return;
+
         enemiesAlive--;
 
         if (enemiesAlive > 0) return;
@@ -172,7 +217,16 @@ public class WaveManager : MonoBehaviour
     IEnumerator WaveCompleteSequence()
     {
         if (waveCompleteSound) audioSource.PlayOneShot(waveCompleteSound);
-        yield return StartCoroutine(FadeCanvasGroupPopup(waveCompleteScreen));
+        waveCompleteScreen?.SetActive(true);
+
+        float t = 0f;
+        while (t < waveCompleteDisplayTime)
+        {
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        waveCompleteScreen?.SetActive(false);
 
         if (upgradeManager != null)
             upgradeManager.ShowUpgradeScreen();
@@ -180,22 +234,31 @@ public class WaveManager : MonoBehaviour
             StartCoroutine(SpawnNextWave());
     }
 
-    public void StartNextWaveCoroutine() => StartCoroutine(SpawnNextWave());
-    public int GetCurrentWaveIndex() => currentWaveIndex;
+    public void StartNextWaveCoroutine()
+    {
+        StartCoroutine(SpawnNextWave());
+    }
+
+    public int GetCurrentWaveIndex()
+    {
+        return currentWaveIndex;
+    }
 
     public void HandleWin()
     {
         if (gameIsOver) return;
         gameIsOver = true;
 
-        if (winScreen)
-        {
-            winScreen.SetActive(true);
-            // FIX: make buttons interactable during pause
-            EventSystem.current.sendNavigationEvents = true;
-        }
+        winScreen?.SetActive(true);
+        SetScreenInteractable(winScreen, true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         Time.timeScale = 0f;
+
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void HandleLose()
@@ -203,64 +266,55 @@ public class WaveManager : MonoBehaviour
         if (gameIsOver) return;
         gameIsOver = true;
 
+        loseScreen?.SetActive(true);
+        SetScreenInteractable(loseScreen, true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         DisableCombatScripts();
 
-        if (loseScreen)
-        {
-            loseScreen.SetActive(true);
-            // FIX: make buttons interactable during pause
-            EventSystem.current.sendNavigationEvents = true;
-        }
-
         Time.timeScale = 0f;
+
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 
-    IEnumerator FadeCanvas(CanvasGroup cg, float from, float to, float time)
+    void SetScreenInteractable(GameObject screen, bool state)
     {
-        if (cg == null) yield break;
+        if (!screen) return;
 
-        float t = 0f;
-        cg.alpha = from;
-
-        while (t < time)
+        CanvasGroup cg = screen.GetComponent<CanvasGroup>();
+        if (cg != null)
         {
-            t += Time.unscaledDeltaTime;
-            cg.alpha = Mathf.Lerp(from, to, t / time);
-            yield return null;
+            cg.interactable = state;
+            cg.blocksRaycasts = state;
         }
-        cg.alpha = to;
-    }
 
-    IEnumerator FadeCanvasGroupPopup(GameObject obj)
-    {
-        obj.SetActive(true);
-        CanvasGroup cg = obj.GetComponent<CanvasGroup>();
-        yield return StartCoroutine(FadeCanvas(cg, 0f, 1f, 0.6f));
-        yield return new WaitForSecondsRealtime(waveCompleteDisplayTime);
-        yield return StartCoroutine(FadeCanvas(cg, 1f, 0f, 0.6f));
-        obj.SetActive(false);
+        Button[] buttons = screen.GetComponentsInChildren<Button>(true);
+        foreach (var btn in buttons)
+            btn.interactable = state;
     }
 
     void DisableCombatScripts()
     {
-        GameObject playerObj = player ?
-            player.gameObject :
-            Object.FindFirstObjectByType<PlayerHealth>()?.gameObject;
-
+        GameObject playerObj = player ? player.gameObject : Object.FindFirstObjectByType<PlayerHealth>()?.gameObject;
         if (!playerObj) return;
 
         MonoBehaviour[] all = playerObj.GetComponentsInChildren<MonoBehaviour>(true);
-
         foreach (MonoBehaviour mb in all)
         {
             if (!mb) continue;
-
             string n = mb.GetType().Name.ToLower();
-            if (n.Contains("camera") || n.Contains("ui") ||
-                n.Contains("audio") || n.Contains("health")) continue;
+
+            if (n.Contains("camera") || n.Contains("audiolistener") || n.Contains("canvas") ||
+                n.Contains("ui") || n.Contains("render") || n.Contains("animator") ||
+                n.Contains("audio") || n.Contains("health") || n.Contains("crystal"))
+                continue;
 
             if (n.Contains("bow") || n.Contains("shoot") || n.Contains("attack") ||
-                n.Contains("weapon") || n.Contains("input") || n.Contains("aim"))
+                n.Contains("weapon") || n.Contains("playerinput") || n.Contains("input") ||
+                n.Contains("aim") || n.Contains("fire"))
             {
                 if (mb.enabled)
                 {
@@ -271,16 +325,47 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-    void UpdateWaveUI(string text)
+    void EnableCombatScripts()
     {
-        if (waveText)
-            waveText.text = text;
+        foreach (var script in disabledAttackScripts)
+        {
+            if (script != null)
+                script.enabled = true;
+        }
+        disabledAttackScripts.Clear();
     }
 
-    // Retry logic
+    void UpdateWaveUI(string text)
+    {
+        if (waveText) waveText.text = text;
+    }
+
     public void RetryGame()
     {
+        StartCoroutine(RetryAndReload());
+    }
+
+    IEnumerator RetryAndReload()
+    {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        foreach (var mb in disabledAttackScripts)
+        {
+            if (mb != null)
+            {
+                try { mb.enabled = true; } catch { }
+            }
+        }
+        disabledAttackScripts.Clear();
+        gameIsOver = false;
+
+        // Ensure controls panel never appears on retry
+        controlsPanel.gameObject.SetActive(false);
+
+        yield return null;
+
+        AsyncOperation op = SceneManager.LoadSceneAsync(SCENE_NAME);
+        while (!op.isDone)
+            yield return null;
     }
 }
