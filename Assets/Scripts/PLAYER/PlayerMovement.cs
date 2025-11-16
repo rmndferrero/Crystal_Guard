@@ -4,16 +4,20 @@ using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(AudioSource))] // Ensure AudioSource is available
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
     public Transform groundCheck;
 
+    [Header("Dash Settings")]
     public float dashSpeed = 25f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1.5f;
+    public AudioClip dashSound; // Dash sound clip
 
     private Rigidbody rb;
     private PlayerInput playerInput;
@@ -21,11 +25,13 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private float cooldownTimer = 0f;
     private bool isDashing = false;
+    private AudioSource audioSource;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         playerInput = new PlayerInput();
+        audioSource = GetComponent<AudioSource>();
 
         playerInput.OnFoot.Enable();
     }
@@ -66,6 +72,10 @@ public class PlayerMovement : MonoBehaviour
         {
             if (moveInput.magnitude > 0.1f)
             {
+                // Play dash sound
+                if (audioSource != null && dashSound != null)
+                    audioSource.PlayOneShot(dashSound);
+
                 StartCoroutine(StartDash());
             }
         }

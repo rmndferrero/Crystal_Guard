@@ -1156,7 +1156,7 @@ MonoBehaviour:
   explosionPrefab: {fileID: 7135880642722605111, guid: 91663debcce42fb41a77492e36c46946, type: 3}
   burningGroundPrefab: {fileID: 0}
   audioSource: {fileID: 0}
-  fireballSound: {fileID: 8300000, guid: 21dc0d56da3a7a9428277cca4865b021, type: 3}
+  fireballSound: {fileID: 8300000, guid: faf650e7a6971c345b5b6a35cad773ca, type: 3}
   isUnlocked: 0
 --- !u!1 &420111978 stripped
 GameObject:
@@ -7785,6 +7785,10 @@ PrefabInstance:
       propertyPath: m_TargetTexture
       value: 
       objectReference: {fileID: 8400000, guid: acd11996ac556f249ac7e1b9d341a9fe, type: 2}
+    - target: {fileID: 2654518912802502508, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
+      propertyPath: dashSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 23321fed316b4c946aa9b9e6ba5f7446, type: 3}
     - target: {fileID: 3658632932983980620, guid: 4d0b5cc61347d9d4987b21e1c1956747, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.36

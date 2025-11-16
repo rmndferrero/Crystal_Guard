@@ -20,15 +20,26 @@ public class FireballAbility : MonoBehaviour
     public AudioClip fireballSound;    // Sound for casting fireball
 
     [Header("State")]
-    public bool isUnlocked = true;
+    public bool isUnlocked = false; // Keep locked logic
 
     private float nextFireTime = 0f;
 
+    void Awake()
+    {
+        // Ensure a working AudioSource is attached
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+                audioSource = gameObject.AddComponent<AudioSource>();
+        }
+    }
+
     void OnFIREBALL(InputValue value)
     {
-        if (!isUnlocked) return;
-        if (Time.time < nextFireTime) return;
-        if (!value.isPressed) return;
+        if (!isUnlocked) return;                  // Only unlocked abilities can fire
+        if (Time.time < nextFireTime) return;     // Respect cooldown
+        if (!value.isPressed) return;             // Only fire on press
 
         nextFireTime = Time.time + fireballCooldown;
         FireTheBall();
@@ -36,22 +47,25 @@ public class FireballAbility : MonoBehaviour
 
     void FireTheBall()
     {
-        // Play sound first
+        // Play sound (2D sound, full volume)
         if (audioSource != null && fireballSound != null)
-            audioSource.PlayOneShot(fireballSound);
+        {
+            audioSource.spatialBlend = 0f; // Make it 2D so position doesn't matter
+            audioSource.PlayOneShot(fireballSound, 1f);
+        }
 
-        // Spawn fireball
+        // Spawn fireball only if prefab and firePoint exist
         if (fireballPrefab != null && firePoint != null)
         {
             GameObject fireballObj = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
             Fireball fireball = fireballObj.GetComponent<Fireball>();
             if (fireball != null)
             {
-                fireball.damage = this.fireballDamage;
-                fireball.explosionRadius = this.aoeRadius;
-                fireball.explosionEffect = this.explosionPrefab;
-                fireball.burningGroundEffect = this.burningGroundPrefab;
-                fireball.burnDuration = this.fireballBurnDuration;
+                fireball.damage = fireballDamage;
+                fireball.explosionRadius = aoeRadius;
+                fireball.explosionEffect = explosionPrefab;
+                fireball.burningGroundEffect = burningGroundPrefab;
+                fireball.burnDuration = fireballBurnDuration;
             }
         }
     }
