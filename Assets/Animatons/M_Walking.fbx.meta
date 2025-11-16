@@ -1,0 +1,271 @@
+fileFormatVersion: 2
+guid: 7805f140e0242ea4c906a9d55094e00a
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Walking_melee
+      takeName: mixamo.com
+      internalID: -203655887218126122
+      firstFrame: 0
+      lastFrame: 31
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: Melee(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Armature
+      parentName: Melee(Clone)
+      position: {x: -0.0070225433, y: 0.9265137, z: 0.057173766}
+      rotation: {x: -0.7070731, y: 0.0017659899, z: -0.0016696665, w: 0.70713633}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Bone.001
+      parentName: Armature
+      position: {x: 0.00016575653, y: 0.0012026097, z: -0.005138544}
+      rotation: {x: 0.9071525, y: -0.055540238, z: -0.07116475, w: 0.4110052}
+      scale: {x: 1, y: 1.0000001, z: 1.0000001}
+    - name: Bone.002
+      parentName: Bone.001
+      position: {x: 0, y: 0.00225509, z: 0}
+      rotation: {x: -0.12749547, y: 0.06285772, z: 0.010590013, w: 0.9897888}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.005_end
+      parentName: Bone.002
+      position: {x: 0.0000977673, y: 0.005986406, z: 0.00016148879}
+      rotation: {x: 0.030398253, y: 0.02992261, z: -0.015418632, w: 0.9989709}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.010
+      parentName: Bone.005_end
+      position: {x: 0.0017368235, y: -0.005212977, z: -0.00056049204}
+      rotation: {x: -0.1822619, y: -0.18226178, z: -0.6832128, w: 0.6832141}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.011
+      parentName: Bone.010
+      position: {x: 8.381887e-11, y: 0.002533588, z: -7.105427e-17}
+      rotation: {x: -0.0000000015760119, y: -0.00000005960463, z: -4.556884e-14, w: 1}
+      scale: {x: 0.9999999, y: 0.9999999, z: 1}
+    - name: Bone.011_end
+      parentName: Bone.011
+      position: {x: -0, y: 0.002533588, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.005
+      parentName: Bone.002
+      position: {x: 0, y: 0.0029966545, z: -0.00001774705}
+      rotation: {x: 0.030398246, y: 0.029922623, z: -0.01541864, w: 0.9989709}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.012
+      parentName: Bone.002
+      position: {x: -0.0014496997, y: 0.0008292997, z: -0.0006116205}
+      rotation: {x: -0.13805187, y: 0.18455948, z: 0.6829709, w: 0.6931308}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.013
+      parentName: Bone.012
+      position: {x: -4.6560854e-12, y: 0.0025733183, z: 7.105427e-17}
+      rotation: {x: -0.0000000020037798, y: 0.00000093226913, z: 2.292387e-13, w: 1}
+      scale: {x: 0.99999994, y: 0.99999994, z: 0.9999999}
+    - name: Bone.013_end
+      parentName: Bone.013
+      position: {x: -0, y: 0.0025733188, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.006
+      parentName: Armature
+      position: {x: 0.000759082, y: 0.0005862202, z: -0.0058994284}
+      rotation: {x: -0.30593947, y: -0.3723002, z: 0.8673411, w: -0.12455136}
+      scale: {x: 0.99999976, y: 0.99999976, z: 0.9999997}
+    - name: Bone.008
+      parentName: Bone.006
+      position: {x: 0.00036005693, y: 0.0018504189, z: -0.00032454793}
+      rotation: {x: -0.50731164, y: -0.07503603, z: -0.5023443, w: 0.69617146}
+      scale: {x: 1.0000001, y: 0.9999999, z: 0.99999994}
+    - name: feelR
+      parentName: Bone.008
+      position: {x: -0.000050573144, y: 0.0021707125, z: -0.00011908779}
+      rotation: {x: 0.82014745, y: 0.020774115, z: 0.15248145, w: 0.5510682}
+      scale: {x: 1, y: 1, z: 1}
+    - name: feelR_end
+      parentName: feelR
+      position: {x: -0, y: 0.0012033933, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Bone.007
+      parentName: Armature
+      position: {x: -0.0005598359, y: 0.00061148644, z: -0.0059243813}
+      rotation: {x: 0.28047812, y: -0.30840206, z: 0.8884236, w: 0.19215524}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: Bone.009
+      parentName: Bone.007
+      position: {x: -0.00029586142, y: 0.001877827, z: -0.0003804861}
+      rotation: {x: -0.5573602, y: 0.023143424, z: 0.53386813, w: 0.6354518}
+      scale: {x: 1, y: 0.99999994, z: 1.0000001}
+    - name: feetL
+      parentName: Bone.009
+      position: {x: 0.0000099426, y: 0.0024487297, z: -0.00012164069}
+      rotation: {x: 0.7807346, y: -0.08091993, z: -0.31233138, w: 0.535121}
+      scale: {x: 0.9999999, y: 0.99999994, z: 1.0000001}
+    - name: feetL_end
+      parentName: feetL
+      position: {x: -0, y: 0.0013573959, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Clothing_Dagger
+      parentName: Armature
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Goblin_Dagger
+      parentName: Armature
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Goblin_Melee
+      parentName: Armature
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Dagger
+      parentName: Melee(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Hat_Dagger
+      parentName: Melee(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: MainBody_Dagger
+      parentName: Melee(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Pants_Dagger
+      parentName: Melee(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: Armature
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: bc834988616872e4cbb3a7b1bdb98492, type: 3}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 2
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

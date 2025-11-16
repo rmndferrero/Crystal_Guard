@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\admin\\Crystal Guard\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\player\\bow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\bow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\enemy\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -11,12 +15,12 @@
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|C:\\Users\\admin\\Crystal Guard\\assets\\scripts\\wave\\upgrade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave\\upgrade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|C:\\Users\\admin\\Crystal Guard\\assets\\scripts\\audiomanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -39,25 +43,38 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Bow.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\Bow.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PLAYER\\Bow.cs",
+              "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\Bow.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PLAYER\\Bow.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAA1wC0AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-12T12:27:06.353Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ENEMY MELEE.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
-              "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs*",
-              "RelativeToolTip": "Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs*",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAowIcAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
+              "ViewState": "AgIAAJUAAAAAAAAAAAAIwKcAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-12T11:35:16.27Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ENEMY.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ENEMY\\ENEMY.cs",
               "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY.cs",
               "RelativeToolTip": "Assets\\Scripts\\ENEMY\\ENEMY.cs",
-              "ViewState": "AgIAAPgAAAAAAAAAAAAswBoBAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAPsAAAAAAAAAAADwvwYBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-12T11:34:55.242Z",
               "EditorCaption": ""
@@ -72,11 +89,12 @@
               "RelativeToolTip": "Assets\\Scripts\\WAVE\\UPGRADE.cs",
               "ViewState": "AgIAAI0AAAAAAAAAAAAqwKgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-12T05:55:06.769Z"
+              "WhenOpened": "2025-11-12T05:55:06.769Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "AudioManager.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\AudioManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\AudioManager.cs",
@@ -88,7 +106,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "WAVE.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\WAVE\\WAVE.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\WAVE\\WAVE.cs",
@@ -101,7 +119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "PLAYER HP.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\PLAYER HP.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PLAYER\\PLAYER HP.cs",

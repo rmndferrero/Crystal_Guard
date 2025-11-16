@@ -103,6 +103,13 @@ public class MeleeEnemyAI : MonoBehaviour
         {
             AttackTarget();
         }
+
+        Debug.Log("Agent Vel = " + agent.velocity.magnitude +
+          " | Speed Param = " + (agent.velocity.magnitude / agent.speed) +
+          " | IsStopped = " + agent.isStopped);
+
+        Debug.Log("AnimatorSpeed = " + animator.GetFloat("Speed"));
+
     }
 
     // --- THIS IS THE NEW FUNCTION ---

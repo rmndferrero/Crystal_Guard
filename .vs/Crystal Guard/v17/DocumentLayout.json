@@ -3,15 +3,15 @@
   "WorkspaceRootPath": "C:\\Users\\admin\\Crystal Guard\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|C:\\Users\\admin\\Crystal Guard\\assets\\scripts\\enemy\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\player\\bow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player\\bow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\enemy\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\enemy melee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\enemy\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|C:\\Users\\admin\\Crystal Guard\\assets\\scripts\\enemy\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -19,7 +19,7 @@
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave\\upgrade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|c:\\users\\admin\\crystal guard\\assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|C:\\Users\\admin\\Crystal Guard\\assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BCEF6B18-82A9-F2E1-ED2C-32D78804504E}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\wave\\wave.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -38,30 +38,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Bow.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\Bow.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PLAYER\\Bow.cs",
               "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\PLAYER\\Bow.cs",
               "RelativeToolTip": "Assets\\Scripts\\PLAYER\\Bow.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAA1wC0AAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAABoAAAAAAAAAAAAQwC0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-12T12:27:06.353Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "ENEMY MELEE.cs",
               "DocumentMoniker": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
               "ToolTip": "C:\\Users\\admin\\Crystal Guard\\Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
               "RelativeToolTip": "Assets\\Scripts\\ENEMY\\ENEMY MELEE.cs",
-              "ViewState": "AgIAAJUAAAAAAAAAAAAIwKcAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAALUAAAAAAAAAAAAAAN4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-12T11:35:16.27Z",
               "EditorCaption": ""
@@ -76,8 +76,7 @@
               "RelativeToolTip": "Assets\\Scripts\\ENEMY\\ENEMY.cs",
               "ViewState": "AgIAAPsAAAAAAAAAAADwvwYBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-12T11:34:55.242Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-12T11:34:55.242Z"
             },
             {
               "$type": "Document",
@@ -89,8 +88,7 @@
               "RelativeToolTip": "Assets\\Scripts\\WAVE\\UPGRADE.cs",
               "ViewState": "AgIAAI0AAAAAAAAAAAAqwKgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-12T05:55:06.769Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-12T05:55:06.769Z"
             },
             {
               "$type": "Document",
@@ -114,8 +112,7 @@
               "RelativeToolTip": "Assets\\Scripts\\WAVE\\WAVE.cs",
               "ViewState": "AgIAAJUAAAAAAAAAAAAUwAEAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-12T02:10:40.111Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-12T02:10:40.111Z"
             },
             {
               "$type": "Document",
