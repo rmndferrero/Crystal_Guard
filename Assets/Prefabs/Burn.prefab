@@ -9782,6 +9782,8 @@ MonoBehaviour:
   burnDamage: 5
   burnDuration: 5
   burnTickRate: 1
+  burnSound: {fileID: 8300000, guid: 25142fbd71d7258438b2df20c3ee5716, type: 3}
+  burnVolume: 1
 --- !u!54 &3454543080401898036
 Rigidbody:
   m_ObjectHideFlags: 0

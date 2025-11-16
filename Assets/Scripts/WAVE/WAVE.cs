@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(AudioSource))]
 public class WaveManager : MonoBehaviour
@@ -36,8 +36,8 @@ public class WaveManager : MonoBehaviour
 
     [Header("UI & SFX")]
     public TextMeshProUGUI waveText;
-    public GameObject winScreen;
-    public GameObject loseScreen;
+    public GameObject winScreen; // no CanvasGroup here
+    public GameObject loseScreen; // no CanvasGroup here
     public GameObject waveCompleteScreen;
     public GameObject surviveAllWavesScreen;
     public float waveCompleteDisplayTime = 2.5f;
@@ -55,8 +55,9 @@ public class WaveManager : MonoBehaviour
     private bool gameIsOver = false;
     private bool gameStarted = false;
 
+    public bool GameStarted => gameStarted;
+
     private readonly List<MonoBehaviour> disabledAttackScripts = new();
-    private const string SCENE_NAME = "Game";
 
     void Start()
     {
@@ -118,7 +119,8 @@ public class WaveManager : MonoBehaviour
     {
         if (surviveAllWavesSound) audioSource.PlayOneShot(surviveAllWavesSound);
 
-        yield return StartCoroutine(FadeCanvasGroupPopup(surviveAllWavesScreen));
+        if (surviveAllWavesScreen)
+            yield return StartCoroutine(FadeCanvasGroupPopup(surviveAllWavesScreen));
     }
 
     IEnumerator SpawnNextWave()
@@ -185,21 +187,38 @@ public class WaveManager : MonoBehaviour
     {
         if (gameIsOver) return;
         gameIsOver = true;
+
+        if (winScreen)
+        {
+            winScreen.SetActive(true);
+            // FIX: make buttons interactable during pause
+            EventSystem.current.sendNavigationEvents = true;
+        }
+
         Time.timeScale = 0f;
-        StartCoroutine(FadeCanvasGroupPopup(winScreen));
     }
 
     public void HandleLose()
     {
         if (gameIsOver) return;
         gameIsOver = true;
+
         DisableCombatScripts();
+
+        if (loseScreen)
+        {
+            loseScreen.SetActive(true);
+            // FIX: make buttons interactable during pause
+            EventSystem.current.sendNavigationEvents = true;
+        }
+
         Time.timeScale = 0f;
-        StartCoroutine(FadeCanvasGroupPopup(loseScreen));
     }
 
     IEnumerator FadeCanvas(CanvasGroup cg, float from, float to, float time)
     {
+        if (cg == null) yield break;
+
         float t = 0f;
         cg.alpha = from;
 
@@ -256,5 +275,12 @@ public class WaveManager : MonoBehaviour
     {
         if (waveText)
             waveText.text = text;
+    }
+
+    // Retry logic
+    public void RetryGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

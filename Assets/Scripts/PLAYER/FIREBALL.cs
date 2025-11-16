@@ -8,12 +8,16 @@ public class FireballAbility : MonoBehaviour
     public float fireballCooldown = 3f;
     public float fireballDamage = 50f;
     public float aoeRadius = 3f;
-    public float fireballBurnDuration = 3f; // <-- FIX
+    public float fireballBurnDuration = 3f;
 
     [Header("Visuals")]
     public Transform firePoint;
     public GameObject explosionPrefab;
-    public GameObject burningGroundPrefab; // <-- NEW
+    public GameObject burningGroundPrefab;
+
+    [Header("Audio")]
+    public AudioSource audioSource;    // AudioSource to play SFX
+    public AudioClip fireballSound;    // Sound for casting fireball
 
     [Header("State")]
     public bool isUnlocked = true;
@@ -24,11 +28,7 @@ public class FireballAbility : MonoBehaviour
     {
         if (!isUnlocked) return;
         if (Time.time < nextFireTime) return;
-
-        if (!value.isPressed)
-        {
-            return;
-        }
+        if (!value.isPressed) return;
 
         nextFireTime = Time.time + fireballCooldown;
         FireTheBall();
@@ -36,6 +36,11 @@ public class FireballAbility : MonoBehaviour
 
     void FireTheBall()
     {
+        // Play sound first
+        if (audioSource != null && fireballSound != null)
+            audioSource.PlayOneShot(fireballSound);
+
+        // Spawn fireball
         if (fireballPrefab != null && firePoint != null)
         {
             GameObject fireballObj = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
@@ -45,8 +50,8 @@ public class FireballAbility : MonoBehaviour
                 fireball.damage = this.fireballDamage;
                 fireball.explosionRadius = this.aoeRadius;
                 fireball.explosionEffect = this.explosionPrefab;
-                fireball.burningGroundEffect = this.burningGroundPrefab; // <-- NEW
-                fireball.burnDuration = this.fireballBurnDuration; // <-- NEW
+                fireball.burningGroundEffect = this.burningGroundPrefab;
+                fireball.burnDuration = this.fireballBurnDuration;
             }
         }
     }
